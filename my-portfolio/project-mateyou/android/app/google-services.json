@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107613316794",
+    "project_id": "mateyou-4ceff",
+    "storage_bucket": "mateyou-4ceff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107613316794:android:2cccbcd71d457911d70483",
+        "android_client_info": {
+          "package_name": "com.mateyou.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkdSL_fSMZCgSoNPDUavVDbJMD1kIrxc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

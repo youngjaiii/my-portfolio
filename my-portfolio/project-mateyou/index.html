@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- XSS 방어를 위한 Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://js.tosspayments.com https://unpkg.com https://*.daumcdn.net blob:;
+      worker-src 'self' blob:;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://*.daumcdn.net;
+      font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:;
+      img-src 'self' data: blob: https: http:;
+      media-src 'self' blob: https://*.supabase.co https://cdn.mateyou.me http://stream.mateyou.me https://stream.mateyou.me;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mateyou.me https://*.dicebear.com wss://*.mateyou.me ws://stream.mateyou.me:7880 http://stream.mateyou.me:7880 http://stream.mateyou.me https://stream.mateyou.me https://*.tosspayments.com https://unpkg.com https://cdn.jsdelivr.net http://localhost:4000 https://*.livekit.cloud wss://*.livekit.cloud https://noembed.com https://cdn.mateyou.me https://*.daumcdn.net https://*.daum.net https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org;
+      frame-src 'self' https://*.supabase.co https://*.tosspayments.com https://www.youtube.com https://youtube.com https://*.daumcdn.net https://*.daum.net http://*.daum.net;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+    " />
+    <!-- Favicon - PNG with transparent background -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.png" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="192x192" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/favicon.png" />
+
+    <!-- Android Chrome Icons -->
+    <link rel="icon" sizes="192x192" href="/favicon.png" />
+    <link rel="icon" sizes="512x512" href="/favicon.png" />
+
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Mate you - 게임 파트너 매칭 플랫폼" />
+    <meta name="google-site-verification" content="dRkSNqJZYt8wnSofXrBBRPDy0TbL-936wbTrNhzIod0" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Mate you</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

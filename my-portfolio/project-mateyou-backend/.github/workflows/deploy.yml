@@ -1,0 +1,43 @@
+name: Deploy to AWS EC2 (SSH)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to EC2 via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 13.124.251.196
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            echo "🚀 Starting deployment..."
+
+            cd ~/mateyou-backend
+
+            echo "🔄 Pulling latest code..."
+            git pull origin main
+
+            echo "📦 Installing dependencies..."
+            npm install
+
+            echo "🔨 Building project..."
+            npm run build
+
+            echo "♻️ Restarting PM2..."
+            pm2 restart mateyou-backend
+
+            echo "🎉 Deployment complete!"
+            pm2 list

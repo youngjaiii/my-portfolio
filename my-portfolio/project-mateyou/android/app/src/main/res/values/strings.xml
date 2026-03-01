@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mate You</string>
+    <string name="title_activity_main">Mate You</string>
+    <string name="package_name">com.mateyou.app</string>
+    <string name="custom_url_scheme">com.mateyou.app</string>
+    <string name="splash_title">메이트와 함께하는 기분 좋은 시작</string>
+</resources>

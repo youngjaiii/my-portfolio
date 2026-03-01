@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 검은 배경 -->
+    <item android:drawable="@android:color/black" />
+    
+    <!-- 로고 이미지 (중앙, 크기 조정) -->
+    <item
+        android:width="48dp"
+        android:height="48dp"
+        android:gravity="center">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/logo_full" />
+    </item>
+</layer-list>

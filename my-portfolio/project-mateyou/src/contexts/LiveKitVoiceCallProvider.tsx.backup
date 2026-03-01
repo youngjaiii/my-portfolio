@@ -1,0 +1,779 @@
+import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from 'react'
+import { Capacitor } from '@capacitor/core'
+import { Device } from '@capacitor/device'
+import { Room, RoomEvent, Track, RemoteParticipant, createLocalAudioTrack, ConnectionState } from 'livekit-client'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { edgeApi } from '@/lib/edgeApi'
+import { dialingTone, ringingTone, playConnectedTone, playEndTone, stopAllCallSounds } from '@/utils/callSounds'
+import { useRouter } from '@tanstack/react-router'
+
+// GlobalVoiceCallContext를 재사용
+import { GlobalVoiceCallContext, type GlobalVoiceCallContextType } from './GlobalVoiceCallProvider'
+import LiveKit from '@/plugins/LiveKit'
+
+interface CallRoom {
+  id: string
+  room_code: string | null
+  status: 'waiting' | 'in_call' | 'ended'
+  started_at: string
+  ended_at: string | null
+  member_id: string | null
+  partner_id: string | null
+  topic: string | null
+  last_signal_at: string | null
+  created_at: string
+}
+
+interface IncomingCall {
+  roomId: string
+  from: string
+  fromName: string
+  peerId: string
+  callId?: string | null
+  // LiveKit 추가 필드
+  roomName?: string
+  url?: string
+}
+
+interface ActiveCall {
+  partnerId: string
+  partnerName: string
+  callId?: string | null
+  roomId: string
+  startedAt: Date
+  duration: number
+  // LiveKit 추가 필드
+  roomName?: string
+}
+
+export function LiveKitVoiceCallProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
+  const router = useRouter()
+  
+  const [callState, setCallState] = useState<'idle' | 'calling' | 'receiving' | 'connected'>('idle')
+  const [activeCall, setActiveCall] = useState<ActiveCall | null>(null)
+  const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null)
+  const [isMuted, setIsMuted] = useState(false)
+  const [isSpeakerOn, setIsSpeakerOn] = useState(false)
+  
+  const roomRef = useRef<Room | null>(null)
+  const localAudioTrackRef = useRef<any>(null)
+  const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const durationIntervalRef = useRef<number | null>(null)
+  const callStateRef = useRef(callState)
+  const incomingCallRef = useRef(incomingCall)
+  const channelRef = useRef<any>(null)
+  const callingTimeoutRef = useRef<number | null>(null)
+  
+  // Refs 동기화
+  useEffect(() => {
+    callStateRef.current = callState
+  }, [callState])
+  
+  useEffect(() => {
+    incomingCallRef.current = incomingCall
+  }, [incomingCall])
+  
+  const isNative = Capacitor.isNativePlatform()
+  const isIOS = Capacitor.getPlatform() === 'ios'
+  
+  // 채팅방으로 이동
+  const navigateToChat = useCallback(() => {
+    if (activeCall?.partnerId) {
+      router.navigate({ to: '/chat' })
+    }
+  }, [activeCall?.partnerId, router])
+  
+  // 통화 시간 추적
+  const startDurationTracking = useCallback(() => {
+    if (durationIntervalRef.current) {
+      clearInterval(durationIntervalRef.current)
+    }
+    durationIntervalRef.current = window.setInterval(() => {
+      setActiveCall((prev) => prev ? { ...prev, duration: prev.duration + 1 } : null)
+    }, 1000)
+  }, [])
+  
+  const stopDurationTracking = useCallback(() => {
+    if (durationIntervalRef.current) {
+      clearInterval(durationIntervalRef.current)
+      durationIntervalRef.current = null
+    }
+  }, [])
+
+  // 통화 종료 (forward declaration for resetCallState)
+  const endCallRef = useRef<(() => Promise<void>) | undefined>(undefined)
+  const isEndingRef = useRef(false)
+  
+  // Room 이벤트 설정
+  const setupRoomListeners = useCallback((room: Room) => {
+    room.on(RoomEvent.Connected, () => {
+      console.log('✅ [LiveKit] Room connected')
+    })
+    
+    room.on(RoomEvent.Disconnected, (reason) => {
+      console.log('🔌 [LiveKit] Room disconnected:', reason)
+      if (isEndingRef.current) return
+      if (callStateRef.current !== 'idle') {
+        endCallRef.current?.()
+      }
+    })
+    
+    room.on(RoomEvent.ParticipantConnected, (participant: RemoteParticipant) => {
+      console.log('👤 [LiveKit] Participant connected:', participant.identity)
+      
+      // 상대방 연결 시 통화 연결 상태로 변경
+      if (callStateRef.current === 'calling') {
+        if (callingTimeoutRef.current) {
+          clearTimeout(callingTimeoutRef.current)
+          callingTimeoutRef.current = null
+        }
+        stopAllCallSounds()
+        playConnectedTone()
+        setCallState('connected')
+        startDurationTracking()
+      }
+    })
+    
+    room.on(RoomEvent.ParticipantDisconnected, (participant: RemoteParticipant) => {
+      console.log('👤 [LiveKit] Participant disconnected:', participant.identity)
+      
+      // 상대방 퇴장 시 통화 종료
+      if (room.remoteParticipants.size === 0 && callStateRef.current === 'connected') {
+        endCallRef.current?.()
+      }
+    })
+    
+    room.on(RoomEvent.TrackSubscribed, (track) => {
+      console.log('🎵 [LiveKit] Track subscribed:', track.kind)
+      
+      if (track.kind === Track.Kind.Audio) {
+        // Web에서 오디오 재생
+        if (!isNative) {
+          const audioElement = track.attach()
+          audioElement.style.display = 'none'
+          document.body.appendChild(audioElement)
+          remoteAudioRef.current = audioElement
+        }
+        
+        // 통화 연결 완료
+        if (callStateRef.current !== 'connected') {
+          stopAllCallSounds()
+          playConnectedTone()
+          setCallState('connected')
+          startDurationTracking()
+        }
+      }
+    })
+    
+    room.on(RoomEvent.ConnectionStateChanged, (state: ConnectionState) => {
+      console.log('🔄 [LiveKit] Connection state:', state)
+    })
+  }, [startDurationTracking, isNative])
+  
+  // 리셋
+  const resetCallState = useCallback(() => {
+    stopDurationTracking()
+    stopAllCallSounds()
+    
+    if (callingTimeoutRef.current) {
+      clearTimeout(callingTimeoutRef.current)
+      callingTimeoutRef.current = null
+    }
+    
+    if (remoteAudioRef.current) {
+      remoteAudioRef.current.remove()
+      remoteAudioRef.current = null
+    }
+    
+    if (localAudioTrackRef.current) {
+      localAudioTrackRef.current.stop()
+      localAudioTrackRef.current = null
+    }
+    
+    if (roomRef.current) {
+      roomRef.current.disconnect()
+      roomRef.current = null
+    }
+    
+    setCallState('idle')
+    setActiveCall(null)
+    setIncomingCall(null)
+    setIsMuted(false)
+    setIsSpeakerOn(false)
+  }, [stopDurationTracking])
+  
+  // 통화 시작
+  const startCall = useCallback(async (partnerId: string, partnerName: string, callId?: string) => {
+    if (!user?.id || callState !== 'idle') return
+    
+    console.log('📞 [LiveKit] Starting call to:', partnerName)
+    
+    try {
+      console.log('📞 [LiveKitVoiceCallProvider] Setting callState to calling')
+      setCallState('calling')
+      dialingTone.start().catch(() => {})
+      
+      // 1. 룸 생성 및 토큰 받기
+      console.log('📞 [LiveKit] Calling createRoom API for:', partnerId)
+      const response = await edgeApi.livekit.createRoom(partnerId, 'voice')
+      console.log('📞 [LiveKit] createRoom response:', JSON.stringify(response))
+      
+      // 응답이 직접 데이터를 포함하거나 data wrapper가 있을 수 있음
+      const responseData = (response as any).data || response
+      if (!responseData.success && !responseData.token) {
+        console.error('❌ [LiveKit] createRoom failed:', response)
+        throw new Error((response as any).error?.message || 'Failed to create room')
+      }
+      
+      const { token, url, roomName } = responseData
+      
+      console.log('📞 [LiveKit] Room created:', roomName)
+      
+      // 2. 상대방에게 통화 요청 브로드캐스트
+      console.log('📡 [LiveKitVoiceCallProvider] Broadcasting call request to:', partnerId)
+      const channel = supabase.channel(`call-notifications-${partnerId}`)
+      await channel.subscribe()
+      await channel.send({
+        type: 'broadcast',
+        event: 'livekit-call-request',
+        payload: {
+          from: user.id,
+          fromName: user.name || 'Unknown',
+          to: partnerId,
+          roomName,
+          url,
+          callId,
+          timestamp: Date.now(),
+        },
+      })
+      console.log('✅ [LiveKitVoiceCallProvider] Call request broadcasted')
+      channel.unsubscribe()
+      
+      // 3. iOS: CallKit 시스템 UI + 네이티브 LiveKit SDK
+      if (isIOS) {
+        try {
+          // 네이티브 다이얼톤 시작
+          console.log('📞 [LiveKit] Starting native dial tone...')
+          await LiveKit.startDialTone().catch(() => {
+            console.warn('⚠️ [LiveKit] Failed to start native dial tone')
+          })
+
+          // CallKit 발신 UI 표시 (상단 배너)
+          console.log('📞 [LiveKit] Starting CallKit outgoing call...')
+          await LiveKit.startOutgoingCall({
+            callerName: partnerName,
+            callUUID: roomName,
+          })
+
+          // LiveKit 연결 (타임아웃 10초)
+          console.log('🔊 [LiveKit] Connecting via native SDK...')
+          const connectPromise = LiveKit.connect({ url, token, roomName })
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Connection timeout')), 10000)
+          )
+
+          await Promise.race([connectPromise, timeoutPromise])
+              console.log('✅ [LiveKit] Native SDK connected successfully')
+
+          // 통화 시작 성공 시 call_room에 기록
+          try {
+            console.log('📝 [LiveKitVoiceCallProvider] Recording call to database')
+            await supabase.from('call_rooms').insert({
+              room_code: roomName,
+              status: 'in_call',
+              started_at: new Date().toISOString(),
+              member_id: user.id,
+              partner_id: partnerId,
+              topic: `voice_call_${user.id}_${partnerId}`,
+              last_signal_at: new Date().toISOString(),
+            })
+            console.log('✅ [LiveKitVoiceCallProvider] Call recorded to database')
+          } catch (dbError) {
+            console.error('❌ [LiveKitVoiceCallProvider] Failed to record call:', dbError)
+          }
+
+        } catch (connectError: any) {
+          console.error('❌ [LiveKit] Native SDK connection failed:', connectError)
+
+          // CallKit 정리
+          try {
+            await LiveKit.endCall().catch(() => {})
+          } catch {}
+
+          // 에러 메시지 표시
+          throw new Error(`연결 실패: ${connectError.message}`)
+        }
+      } else {
+        // Web/Android: livekit-client 사용
+        const room = new Room({
+          adaptiveStream: true,
+          dynacast: true,
+        })
+        
+        roomRef.current = room
+        setupRoomListeners(room)
+        
+        await room.connect(url, token)
+        
+        // 로컬 오디오 퍼블리시
+        const audioTrack = await createLocalAudioTrack({
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        })
+        localAudioTrackRef.current = audioTrack
+        await room.localParticipant.publishTrack(audioTrack)
+      }
+      
+      console.log('📞 [LiveKitVoiceCallProvider] Setting activeCall:', { partnerId, partnerName, roomName })
+      setActiveCall({
+        partnerId,
+        partnerName,
+        callId,
+        roomId: roomName,
+        roomName,
+        startedAt: new Date(),
+        duration: 0,
+      })
+      
+      // 60초 타임아웃
+      callingTimeoutRef.current = window.setTimeout(() => {
+        if (callStateRef.current === 'calling') {
+          alert('상대방이 응답하지 않습니다.')
+          endCallRef.current?.()
+        }
+      }, 60000)
+      
+    } catch (error: any) {
+      console.error('❌ [LiveKit] Start call failed:', error)
+      alert(`통화 시작 실패: ${error.message}`)
+      resetCallState()
+    }
+  }, [user, callState, isIOS, setupRoomListeners, resetCallState])
+  
+  // 통화 응답
+  const answerCall = useCallback(async () => {
+    if (!incomingCall || !user?.id) return
+    
+    console.log('📞 [LiveKit] Answering call from:', incomingCall.fromName)
+    
+    try {
+      stopAllCallSounds()
+      
+      const roomName = incomingCall.roomName || incomingCall.roomId
+      
+      // 토큰 받기
+      console.log('📞 [LiveKit] Calling getToken API for room:', roomName)
+      const response = await edgeApi.livekit.getToken(roomName)
+      console.log('📞 [LiveKit] getToken response:', JSON.stringify(response))
+      
+      // 응답이 직접 데이터를 포함하거나 data wrapper가 있을 수 있음
+      const responseData = (response as any).data || response
+      if (!responseData.success && !responseData.token) {
+        console.error('❌ [LiveKit] getToken failed:', response)
+        throw new Error((response as any).error?.message || 'Failed to get token')
+      }
+      
+      const { token, url } = responseData
+      
+      // iOS: 네이티브 SDK
+      if (isIOS) {
+        console.log('🔊 [LiveKit] Connecting via native SDK (answer)...')
+        await LiveKit.connect({ url, token, roomName })
+      } else {
+        // Web/Android: livekit-client
+        const room = new Room({
+          adaptiveStream: true,
+          dynacast: true,
+        })
+        
+        roomRef.current = room
+        setupRoomListeners(room)
+        
+        await room.connect(url, token)
+        
+        const audioTrack = await createLocalAudioTrack({
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        })
+        localAudioTrackRef.current = audioTrack
+        await room.localParticipant.publishTrack(audioTrack)
+      }
+      
+      playConnectedTone()
+      setCallState('connected')
+      startDurationTracking()
+      
+      setActiveCall({
+        partnerId: incomingCall.from,
+        partnerName: incomingCall.fromName,
+        callId: incomingCall.callId,
+        roomId: roomName,
+        roomName,
+        startedAt: new Date(),
+        duration: 0,
+      })
+      
+      setIncomingCall(null)
+      
+    } catch (error: any) {
+      console.error('❌ [LiveKit] Answer call failed:', error)
+      alert(`통화 응답 실패: ${error.message}`)
+      resetCallState()
+    }
+  }, [incomingCall, user, isIOS, setupRoomListeners, startDurationTracking, resetCallState])
+  
+  // 통화 거절
+  const rejectCall = useCallback(() => {
+    if (!incomingCall) return
+    
+    console.log('📞 [LiveKit] Rejecting call')
+    stopAllCallSounds()
+    
+    // iOS CallKit 종료
+    if (isIOS) {
+      LiveKit.endCall().catch(() => {})
+    }
+    
+    resetCallState()
+  }, [incomingCall, isIOS, resetCallState])
+  
+  // 통화 종료
+  const endCall = useCallback(async () => {
+    if (isEndingRef.current) return
+    isEndingRef.current = true
+
+    try {
+      // 다이얼톤 중지
+      if (isIOS) {
+        await LiveKit.stopDialTone().catch(() => {})
+      }
+
+      stopAllCallSounds()
+      playEndTone()
+
+      if (isIOS) {
+        console.log('📞 [LiveKitVoiceCallProvider] Ending iOS call')
+        try {
+          // CallKit 통화 종료
+          await LiveKit.endCall()
+          console.log('✅ [LiveKitVoiceCallProvider] CallKit call ended')
+
+          // 상대방에게 통화 종료 브로드캐스트
+          if (activeCall?.partnerId) {
+            try {
+              const endChannel = supabase.channel(`call-notifications-${activeCall.partnerId}`)
+              await endChannel.subscribe()
+              await endChannel.send({
+                type: 'broadcast',
+                event: 'livekit-call-ended',
+                payload: {
+                  from: user.id,
+                  to: activeCall.partnerId,
+                  roomName: activeCall.roomName,
+                  timestamp: Date.now(),
+                },
+              })
+              console.log('✅ [LiveKitVoiceCallProvider] Call end broadcasted')
+              endChannel.unsubscribe()
+            } catch (broadcastError) {
+              console.error('❌ [LiveKitVoiceCallProvider] Failed to broadcast call end:', broadcastError)
+            }
+          }
+
+          // call_room 상태 업데이트
+          if (activeCall?.roomName) {
+            try {
+              await supabase
+                .from('call_rooms')
+                .update({
+                  status: 'ended',
+                  ended_at: new Date().toISOString(),
+                  last_signal_at: new Date().toISOString(),
+                })
+                .eq('room_code', activeCall.roomName)
+              console.log('✅ [LiveKitVoiceCallProvider] Call room updated to ended')
+            } catch (dbError) {
+              console.error('❌ [LiveKitVoiceCallProvider] Failed to update call room:', dbError)
+            }
+          }
+
+          // LiveKit 연결 해제 (약간의 딜레이 후)
+          setTimeout(async () => {
+            try {
+              await LiveKit.disconnect()
+              console.log('✅ [LiveKitVoiceCallProvider] LiveKit disconnected')
+            } catch (error) {
+              console.error('❌ [LiveKitVoiceCallProvider] LiveKit disconnect failed:', error)
+            }
+          }, 1000)
+        } catch (error) {
+          console.error('❌ [LiveKitVoiceCallProvider] CallKit endCall failed:', error)
+        }
+      }
+    } finally {
+      resetCallState()
+      isEndingRef.current = false
+    }
+  }, [isIOS, resetCallState])
+  
+  // endCallRef 설정
+  useEffect(() => {
+    endCallRef.current = endCall
+  }, [endCall])
+  
+  // 음소거 토글
+  const toggleMute = useCallback(async () => {
+    const newMuted = !isMuted
+
+    try {
+      if (isIOS) {
+        console.log('🎤 [LiveKitVoiceCallProvider] Setting microphone enabled:', !newMuted)
+        const result = await LiveKit.setMicrophoneEnabled({ enabled: !newMuted })
+        console.log('✅ [LiveKitVoiceCallProvider] Microphone result:', result)
+
+        if (result.success) {
+          setIsMuted(newMuted)
+          console.log('✅ [LiveKitVoiceCallProvider] Mute toggled to:', newMuted)
+        } else {
+          console.error('❌ [LiveKitVoiceCallProvider] Failed to toggle mute')
+        }
+      } else if (roomRef.current) {
+        await roomRef.current.localParticipant.setMicrophoneEnabled(!newMuted)
+        setIsMuted(newMuted)
+      }
+    } catch (error) {
+      console.error('❌ [LiveKitVoiceCallProvider] Toggle mute failed:', error)
+    }
+  }, [isMuted, isIOS])
+  
+  // 스피커 토글
+  const toggleSpeaker = useCallback(async () => {
+    const newSpeaker = !isSpeakerOn
+
+    try {
+      if (isIOS) {
+        console.log('🔊 [LiveKitVoiceCallProvider] Setting speaker mode:', newSpeaker)
+        const result = await LiveKit.setSpeakerMode({ speaker: newSpeaker })
+        console.log('✅ [LiveKitVoiceCallProvider] Speaker result:', result)
+
+        if (result.success) {
+          setIsSpeakerOn(newSpeaker)
+          console.log('✅ [LiveKitVoiceCallProvider] Speaker toggled to:', newSpeaker)
+        } else {
+          console.error('❌ [LiveKitVoiceCallProvider] Failed to toggle speaker')
+        }
+      }
+    } catch (error) {
+      console.error('❌ [LiveKitVoiceCallProvider] Toggle speaker failed:', error)
+    }
+  }, [isSpeakerOn, isIOS])
+  
+  // 수신 통화 리스너
+  useEffect(() => {
+    if (!user?.id) return
+    
+    console.log(`📡 [LiveKit] Setting up call listener for user: ${user.id}`)
+    
+    const channel = supabase.channel(`call-notifications-${user.id}`)
+    channelRef.current = channel
+    
+    channel
+      .on('broadcast', { event: 'livekit-call-request' }, async (payload: any) => {
+        const { from, fromName, roomName, url, callId } = payload.payload
+        
+        console.log('📻 [LiveKit] Received call request:', { from, fromName, roomName })
+        
+        if (from !== user.id) {
+          if (callStateRef.current !== 'idle') {
+            console.warn('⚠️ Already in a call')
+            return
+          }
+          
+          // iOS: CallKit 표시 (앱 내 팝업 대신)
+          if (isIOS) {
+            try {
+              console.log('📞 [LiveKit] iOS CallKit reportIncomingCall 호출')
+              await LiveKit.reportIncomingCall({
+                callerId: from,
+                callerName: fromName || 'Unknown',
+                roomName: roomName,
+              })
+              console.log('✅ [LiveKit] CallKit UI가 표시되어야 함')
+            } catch (e) {
+              console.warn('❌ CallKit report failed:', e)
+            }
+            // iOS에서는 벨소리도 CallKit이 처리
+          } else {
+            // Android/Web: 앱 내 벨소리
+            ringingTone.start().catch(() => {})
+          }
+          
+          setIncomingCall({
+            roomId: roomName,
+            roomName,
+            from,
+            fromName: fromName || 'Unknown',
+            peerId: from,
+            callId,
+            url,
+          })
+          setCallState('receiving')
+        }
+      })
+      .subscribe()
+    
+    return () => {
+      channel.unsubscribe()
+      channelRef.current = null
+    }
+  }, [user?.id, isIOS])
+  
+  // iOS LiveKit 이벤트 리스너
+  useEffect(() => {
+    if (!isIOS) return
+    
+    const listeners: any[] = []
+    
+    // VoIP 토큰 수신 시 서버로 전송
+    LiveKit.addListener('voipTokenReceived', async (info) => {
+      console.log('📱 [LiveKit] VoIP token received:', info.token?.substring(0, 20) + '...')
+      if (info.token && user?.id) {
+        try {
+          const deviceInfo = await Device.getId()
+          await edgeApi.livekit.saveVoIPToken(info.token, deviceInfo.identifier)
+          console.log('✅ [LiveKit] VoIP token saved to server')
+        } catch (error) {
+          console.error('❌ [LiveKit] Failed to save VoIP token:', error)
+        }
+      }
+    }).then(l => listeners.push(l))
+    
+    // PushKit으로 수신된 통화 (앱이 백그라운드일 때)
+    LiveKit.addListener('incomingCall', async (info) => {
+      console.log('📞 [LiveKit] Incoming call from PushKit:', info)
+      
+      if (callStateRef.current !== 'idle') {
+        console.warn('⚠️ Already in a call')
+        return
+      }
+      
+      setIncomingCall({
+        roomId: info.roomName,
+        roomName: info.roomName,
+        from: info.callerId,
+        fromName: info.callerName,
+        peerId: info.callerId,
+        callId: null,
+      })
+      setCallState('receiving')
+      // iOS에서는 CallKit이 UI 담당
+    }).then(l => listeners.push(l))
+    
+    LiveKit.addListener('callAnswered', async (info) => {
+      console.log('📞 [LiveKit] CallKit answered:', info)
+      if (incomingCallRef.current && callStateRef.current === 'receiving') {
+        await answerCall()
+      }
+    }).then(l => listeners.push(l))
+    
+    LiveKit.addListener('callEnded', (info) => {
+      console.log('📞 [LiveKit] CallKit ended:', info)
+      if (callStateRef.current !== 'idle') {
+        endCall()
+      }
+    }).then(l => listeners.push(l))
+    
+    LiveKit.addListener('participantDisconnected', () => {
+      console.log('👤 [LiveKit] Participant disconnected (native)')
+      if (callStateRef.current === 'connected') {
+        endCall()
+      }
+    }).then(l => listeners.push(l))
+    
+    LiveKit.addListener('connected', () => {
+      console.log('✅ [LiveKit] Native room connected (waiting for participant)')
+      // 연결만 됐을 뿐, 상대방이 들어올 때까지 기다림
+      // participantConnected 이벤트에서 통화 연결 처리
+    }).then(l => listeners.push(l))
+    
+    LiveKit.addListener('participantConnected', async () => {
+      console.log('👤 [LiveKit] Native participant connected - call established')
+      if (callStateRef.current === 'calling' || callStateRef.current === 'receiving') {
+        // 다이얼톤 중지
+        await LiveKit.stopDialTone().catch(() => {})
+
+        stopAllCallSounds()
+        playConnectedTone()
+        setCallState('connected')
+        startDurationTracking()
+
+        // ✅ 발신인 경우 CallKit 상태를 "connected"로 올려줌
+        if (callStateRef.current === 'calling') {
+          LiveKit.reportOutgoingCallConnected().catch(() => {})
+        }
+      }
+    }).then(l => listeners.push(l))
+    
+    
+    LiveKit.addListener('disconnected', (info) => {
+      console.log('🔌 [LiveKit] Native room disconnected:', info)
+      if (callStateRef.current !== 'idle') {
+        endCall()
+      }
+    }).then(l => listeners.push(l))
+    
+    return () => {
+      listeners.forEach(l => l.remove?.())
+    }
+  }, [isIOS, user?.id, answerCall, endCall, startDurationTracking])
+  
+  const formatDuration = useCallback((seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  }, [])
+  
+  // GlobalVoiceCallContextType에 맞는 value 생성 (useMemo로 최적화)
+  const value: GlobalVoiceCallContextType = useMemo(() => ({
+    callState,
+    activeCall,
+    incomingCall,
+    localStream: null, // LiveKit에서는 사용 안함
+    remoteStream: null, // LiveKit에서는 사용 안함
+    startCall,
+    answerCall,
+    rejectCall,
+    endCall,
+    isMuted,
+    toggleMute,
+    isSpeakerOn,
+    toggleSpeaker,
+    formatDuration,
+    navigateToChat,
+  }), [
+    callState,
+    activeCall,
+    incomingCall,
+    startCall,
+    answerCall,
+    rejectCall,
+    endCall,
+    isMuted,
+    toggleMute,
+    isSpeakerOn,
+    toggleSpeaker,
+    formatDuration,
+    navigateToChat,
+  ])
+  
+  // GlobalVoiceCallContext 사용
+  return (
+    <GlobalVoiceCallContext.Provider value={value}>
+      {children}
+    </GlobalVoiceCallContext.Provider>
+  )
+}

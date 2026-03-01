@@ -1,0 +1,6 @@
+﻿# OneDrive ?숆린???쒖쇅 紐⑸줉
+node_modules/**/build/
+node_modules/**/.gradle/
+android/build/
+android/.gradle/
+android/app/build/

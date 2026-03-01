@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary brand color (MateYou Pink) -->
+    <color name="colorPrimary">#FE3A8F</color>
+    <color name="colorPrimaryDark">#E0327F</color>
+    <color name="colorAccent">#FE3A8F</color>
+    
+    <!-- Launcher background color -->
+    <color name="ic_launcher_background">#000000</color>
+</resources>
+

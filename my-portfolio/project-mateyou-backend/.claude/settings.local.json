@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsx:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(find:*)",
+      "Bash(npm run start:*)",
+      "Bash(git restore:*)",
+      "Bash(timeout 10 npm run start:*)",
+      "Bash(git rm:*)",
+      "Bash(npm test:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(git check-ignore:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

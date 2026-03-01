@@ -1,0 +1,22 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+count.txt
+.env
+.env.local
+.env.*.local
+.nitro
+.tanstack
+src/routes/login.tsx
+android/upload_certificate.pem
+android/upload-keystore.jks
+.cursor
+
+# Docker 로컬 설정
+docker-compose.yml
+Dockerfile
+nginx.conf
+ENV_SETUP.md
+.dockerignore

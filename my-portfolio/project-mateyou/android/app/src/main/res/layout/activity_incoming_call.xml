@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- 상단: 발신자 정보 -->
+    <LinearLayout
+        android:id="@+id/callerInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="48dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 프로필 아이콘 (원형) -->
+        <ImageView
+            android:id="@+id/profileIcon"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:background="@drawable/circle_background"
+            android:padding="24dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- 발신자 이름 -->
+        <TextView
+            android:id="@+id/callerNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알 수 없음"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 통화 유형 -->
+        <TextView
+            android:id="@+id/callTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="음성 통화"
+            android:textColor="#AAAAAA"
+            android:textSize="18sp" />
+
+        <!-- 수신 중 텍스트 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전화가 왔습니다"
+            android:textColor="#4CAF50"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+    <!-- 하단: 수락/거절 버튼 -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 거절 버튼 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="64dp">
+
+            <ImageButton
+                android:id="@+id/declineButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/circle_red"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:scaleType="centerInside"
+                android:padding="20dp"
+                android:contentDescription="거절" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="거절"
+                android:textColor="#FF5252"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <!-- 수락 버튼 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="64dp">
+
+            <ImageButton
+                android:id="@+id/acceptButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/circle_green"
+                android:src="@android:drawable/ic_menu_call"
+                android:scaleType="centerInside"
+                android:padding="20dp"
+                android:contentDescription="수락" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="수락"
+                android:textColor="#4CAF50"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+

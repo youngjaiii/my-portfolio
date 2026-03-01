@@ -1,0 +1,122 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        minSdkVersion = 23
+        compileSdkVersion = 35
+        targetSdkVersion = 35
+        androidxActivityVersion = '1.9.2'
+        androidxAppCompatVersion = '1.7.0'
+        androidxCoordinatorLayoutVersion = '1.2.0'
+        androidxCoreSplashScreenVersion = '1.0.1'
+        androidxCoreVersion = '1.15.0'
+        androidxFragmentVersion = '1.8.4'
+        androidxWebkitVersion = '1.12.1'
+        junitVersion = '4.13.2'
+        androidxJunitVersion = '1.2.1'
+        androidxEspressoCoreVersion = '3.6.1'
+        cordovaAndroidVersion = '10.1.1'
+        coreSplashScreenVersion = '1.0.1'
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    
+    // Workaround for Windows file locking issues in library modules
+    afterEvaluate { project ->
+        // Make clean tasks more resilient to file locking issues
+        project.tasks.matching { it.name == "clean" && it instanceof Delete }.all { task ->
+            // Override delete behavior to catch exceptions
+            task.delete = { Object... paths ->
+                paths.each { path ->
+                    try {
+                        def file = project.file(path)
+                        if (file.exists()) {
+                            if (file.isDirectory()) {
+                                file.deleteDir()
+                            } else {
+                                file.delete()
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Could not delete ${path} in clean task for ${project.path}: ${e.message}")
+                    }
+                }
+            }
+            task.doLast {
+                logger.info("Clean task completed for ${project.path} (warnings may have occurred)")
+            }
+        }
+        
+    }
+}
+
+// Global task configuration to handle file locking errors
+gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.allTasks.each { task ->
+        // Make clean tasks more resilient to file locking issues
+        if (task.name == "clean" && task instanceof Delete) {
+            // Wrap delete operations to catch exceptions
+            def originalDelete = task.delete
+            task.delete = { Object... paths ->
+                paths.each { path ->
+                    try {
+                        def file = task.project.file(path)
+                        if (file.exists()) {
+                            if (file.isDirectory()) {
+                                file.deleteDir()
+                            } else {
+                                file.delete()
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Could not delete ${path} in clean task for ${task.project.path}: ${e.message}")
+                    }
+                }
+            }
+            task.doLast {
+                logger.info("Clean task completed for ${task.project.path} (warnings may have occurred)")
+            }
+        }
+        
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+    // Windows file locking workaround: ignore failures in node_modules build directories
+    doLast {
+        // Try to clean node_modules build directories, but don't fail if it doesn't work
+        try {
+            fileTree(dir: '../node_modules/.pnpm', include: '**/build').each { File buildDir ->
+                try {
+                    if (buildDir.exists()) {
+                        buildDir.deleteDir()
+                    }
+                } catch (Exception e) {
+                    logger.warn("Could not delete ${buildDir}: ${e.message}")
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Could not clean node_modules build directories: ${e.message}")
+        }
+    }
+}
+
+
