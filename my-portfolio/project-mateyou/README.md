@@ -1,719 +1,473 @@
-# 🎮 Mate You - 게임 파트너 매칭 플랫폼
+# MateYou Backend — 포트폴리오
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
-
-**Mate You**는 게이머들이 함께 게임을 즐길 수 있는 파트너를 찾고, 게임 코칭 서비스를 제공하는 현대적인 웹 플랫폼입니다.
-
-## 🚀 프로젝트 소개
-
-Mate You는 Discord OAuth를 통해 게임 파트너를 찾고 매칭할 수 있는 현대적인 웹 플랫폼입니다.
-
-**핵심 가치:**
-
-- 🎯 **간편한 매칭**: Discord 계정으로 즉시 시작
-- 💬 **실시간 소통**: Supabase 실시간 구독을 통한 즉시 메시지 동기화
-- 🔔 **스마트 알림**: 브라우저 알림으로 놓치지 않는 메시지
-- 🏆 **전문 코칭**: 검증된 파트너들의 고품질 서비스
-- 💰 **투명한 거래**: 포인트 시스템으로 안전한 결제
-- 📱 **모바일 최적화**: 완벽한 모바일 사용자 경험
-
-게이머들이 자신의 실력을 향상시키고, 함께 즐길 수 있는 동료를 찾는 최적의 공간을 제공합니다.
-
-## 📸 주요 화면
-
-### 메인 대시보드
-
-파트너 목록과 실시간 상태를 확인할 수 있습니다.
-
-### 실시간 채팅
-
-인스타그램 스타일의 깔끔한 채팅 인터페이스로 파트너와 소통할 수 있습니다.
-
-### 포인트 관리
-
-직관적인 UI로 포인트 충전, 사용 내역 확인, 결제가 가능합니다.
-
-## ✨ 주요 기능
-
-### 👥 사용자 관리
-
-- **Discord OAuth 로그인** - Discord 계정으로 간편 로그인
-- **다중 역할 시스템** - 일반 회원, 파트너, 관리자
-- **프로필 관리** - 프로필 이미지 업로드, 이름 변경, 게임 정보, 선호 게임, 인사말 등
-- **실시간 상태 관리** - 온라인/오프라인/매칭중/게임중 상태 표시
-- **프로필 편집 모달** - 프로필 이미지와 이름 실시간 수정
-
-### 🎯 파트너 시스템
-
-- **파트너 신청** - 게임 코칭/동반 서비스 제공자 신청
-- **신청 검토** - 관리자의 파트너 신청 승인/거절
-- **파트너 대시보드** - 의뢰 관리, 포인트 현황, 출금 관리
-- **실시간 의뢰 관리** - 실시간 의뢰 상태 업데이트 및 알림
-- **의뢰 수락/거절** - 디스코드 링크와 함께 클라이언트에게 자동 메시지 전송
-- **의뢰 완료 처리** - 완료 버튼으로 포인트 자동 지급 및 상태 변경
-- **자기 제외 시스템** - 파트너 목록에서 본인 제외 표시
-
-### 💰 포인트 시스템
-
-- **포인트 충전** - 충전 모달을 통한 포인트 구매 (1,000P ~ 50,000P)
-- **포인트 적립** - 의뢰 완료 시 자동 포인트 적립
-- **출금 시스템** - 파트너의 포인트 출금 신청 및 관리
-- **포인트 내역 조회** - 충전/사용/출금 내역을 모달에서 실시간 확인
-- **실시간 잔액** - 보유/대기/출금 완료 포인트 구분 표시
-- **포인트 부족 방지** - 의뢰 시 포인트 부족하면 자동으로 충전 모달 표시
-- **포인트 로깅** - 모든 포인트 변동 내역 자동 기록 및 추적
-
-### 💬 실시간 채팅 시스템
-
-- **인스타그램 스타일 UI** - 데스크톱에서 사이드바, 모바일에서 전체 화면
-- **빠른 채팅** - 파트너 카드에서 바로 채팅 시작
-- **실시간 메시지** - Supabase 실시간 구독을 통한 즉시 메시지 동기화
-- **브라우저 알림** - 창이 비활성화일 때 새 메시지 데스크톱 알림
-- **메시지 중복 방지** - 임시 메시지와 실제 메시지 구분으로 중복 방지
-- **읽음 상태 관리** - 창 포커스 시 자동 읽음 처리 및 실시간 읽지 않은 메시지 수 표시
-- **의뢰하기 통합** - 채팅 중 바로 의뢰 모달 열기 (포인트 부족 시 자동 충전 모달)
-- **모바일 최적화** - 고정 헤더, 의뢰 영역, 채팅 영역, 입력 영역으로 구분된 모바일 UI
-- **한글 입력 최적화** - 한글 입력 완성 전 엔터 키 처리 개선
-- **차단 시스템** - 파트너 전용 사용자 차단/해제 기능 (채팅방 및 메시지 필터링)
-- **서비스 필터링** - 활성화된 파트너 서비스만 표시 (비활성 서비스 자동 숨김)
-- **Swiper 통합** - 의뢰 리스트에 Swiper 적용 (PC 3개, 모바일 1개 표시)
-
-### 📊 관리자 기능
-
-- **파트너 관리** - 신청 승인/거절, 파트너 상태 관리
-- **출금 관리** - 포인트 출금 요청 승인/거절
-- **회원 관리** - 전체 회원 정보 조회 및 관리
-- **통계 대시보드** - 플랫폼 운영 현황 조회
-
-## 🛠 기술 스택
-
-### Frontend
-
-- **React 19** - 최신 React 기능을 활용한 현대적 UI 개발
-- **TypeScript** - 완전한 타입 안전성과 개발자 경험 향상
-- **TanStack Router** - 타입 안전한 파일 기반 라우팅 시스템
-- **TanStack Query** - 서버 상태 관리 및 캐싱 (1초 간격 실시간 업데이트)
-- **Zustand** - 경량 클라이언트 상태 관리 (채팅, 인증)
-- **Tailwind CSS** - 유틸리티 기반 반응형 스타일링
-- **Vite** - 고속 개발 서버 및 번들링
-
-### Backend & Database
-
-- **Supabase** - BaaS 플랫폼 (인증, 데이터베이스, 스토리지, 실시간 기능)
-- **PostgreSQL** - 안정적이고 확장 가능한 관계형 데이터베이스
-- **Row Level Security (RLS)** - 세밀한 데이터 접근 권한 제어
-- **Discord OAuth** - 소셜 로그인 통합
-
-### Development Tools
-
-- **Storybook** - 컴포넌트 독립 개발 및 문서화
-- **ESLint + TypeScript** - 엄격한 코드 품질 관리
-- **Prettier** - 일관된 코드 포맷팅
-- **Vitest** - 빠른 유닛 테스트 실행
-
-### 성능 & 최적화
-
-- **Lazy Loading** - 라우트 기반 코드 스플리팅
-- **React Query Caching** - 지능적인 데이터 캐싱 및 동기화
-- **Barrel Exports** - 체계적인 모듈 구조로 번들 최적화
-- **Responsive Design** - 모바일 우선 반응형 디자인
-- **Optimistic Updates** - 사용자 경험 향상을 위한 낙관적 업데이트
-
-## ⚡ 빠른 시작
-
-```bash
-# 1. 저장소 클론
-git clone <repository-url>
-cd mate_you
-
-# 2. 의존성 설치
-pnpm install
-
-# 3. 환경변수 설정
-cp .env.example .env
-# .env 파일에서 Supabase 및 Discord 설정 입력
-
-# 4. 개발 서버 실행
-pnpm dev
-```
-
-🎉 이제 [http://localhost:3000](http://localhost:3000)에서 앱을 확인할 수 있습니다!
-
-## 📦 상세 설치 가이드
-
-### 필수 요구사항
-
-- **Node.js 18.0.0 이상** - [다운로드](https://nodejs.org/)
-- **pnpm (권장)** - `npm install -g pnpm`
-- **Discord Application** - [Discord Developer Portal](https://discord.com/developers/applications)
-- **Supabase Project** - [Supabase Dashboard](https://supabase.com/dashboard)
-
-### 설치
-
-```bash
-# 저장소 클론
-git clone [repository-url]
-cd mate_you
-
-# 의존성 설치
-pnpm install
-```
-
-### 환경 변수 설정
-
-`.env` 파일을 생성하고 다음 환경 변수를 설정하세요:
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_DISCORD_CLIENT_ID=your_discord_client_id
-VITE_REDIRECT_URI=your_redirect_uri
-```
-
-### Supabase REST 호출 시 주의사항
-
-Supabase REST 엔드포인트를 직접 호출할 때는 `Accept: application/json` 헤더를 명시해야 합니다.  
-헤더가 없으면 `406 Not Acceptable` 응답이 내려올 수 있습니다.
-
-```bash
-curl 'https://<project>.supabase.co/rest/v1/partners?select=id&member_id=eq.<member_id>' \
-  -H "apikey: $SUPABASE_ANON_KEY" \
-  -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-  -H "Accept: application/json" \
-  -H "Content-Type: application/json"
-```
-
-### 개발 서버 실행
-
-```bash
-pnpm dev
-```
-
-애플리케이션이 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
-
-### Toss Payments 지급대행 연동 설정
-
-파트너 정산을 Toss Payments 지급대행으로 처리하려면 아래 항목을 추가로 구성하세요.
-
-1. **데이터베이스 스키마 업데이트**  
-   `supabase/supabase/migrations/20250302093000_add_toss_payout_fields.sql`을 Supabase 프로젝트에 적용해
-   파트너 테이블에 정산/셀러 필드를 추가합니다.
-
-2. **Edge Function 배포**  
-   새로 추가된 `supabase/functions/toss-payout-seller`를 배포합니다.
-
-   ```bash
-   supabase functions deploy toss-payout-seller
-   ```
-
-3. **보안 키 환경 변수 등록**  
-   Toss Payments 개발자센터에서 발급한 API 키를 Supabase Edge Function 시크릿으로 설정합니다.
-
-   ```bash
-   supabase secrets set \
-     TOSS_PAYMENTS_SECRET_KEY=sk_test_xxx \
-     TOSS_PAYMENTS_ENCRYPTION_KEY=hex_encoded_security_key \
-     TOSS_PAYMENTS_API_BASE_URL=https://api.tosspayments.com
-   ```
-
-   `TOSS_PAYMENTS_API_BASE_URL`는 기본값이 Toss 실운영 URL이므로, 샌드박스나 스테이징 환경에서만 변경하세요.
-
-4. **클라이언트 환경 변수**  
-   프런트엔드는 기존 `VITE_SUPABASE_*` 설정만 사용하지만, 파트너 신청 화면에서 실명/정산 계좌 정보를
-   필수로 입력해야 합니다. 테스트 계정에는 샘플 데이터를 준비하세요.
-
-## 📋 사용 가능한 스크립트
-
-- `pnpm dev` - 개발 서버 실행 (포트 3000)
-- `pnpm build` - 프로덕션 빌드
-- `pnpm serve` - 빌드된 앱 미리보기
-- `pnpm test` - 테스트 실행
-- `pnpm lint` - ESLint 실행
-- `pnpm format` - Prettier 실행
-- `pnpm check` - 포맷팅 및 린팅 자동 수정
-- `pnpm storybook` - Storybook 실행
-
-## 🗄 데이터베이스 스키마
-
-### 주요 테이블
-
-#### `members` - 회원 정보
-
-- 기본 회원 정보 (Discord ID, 이름, 역할 등)
-- 게임 정보 및 선호 게임
-- 현재 상태 (온라인/오프라인/매칭중/게임중)
-
-#### `partners` - 파트너 정보
-
-- 파트너 신청 정보
-- 파트너 상태 (대기/승인/거절)
-- 총 포인트 보유량
-
-#### `partner_requests` - 의뢰 정보
-
-- 클라이언트와 파트너 간의 의뢰
-- 의뢰 상태 및 진행 상황
-- 포인트 정보
-
-#### `member_points_logs` - 포인트 로그 (회원용)
-
-- 일반 회원의 포인트 변동 내역 (충전/사용)
-- 타입별 구분 (earn/spend/withdraw)
-
-#### `partner_points_logs` - 포인트 로그 (파트너용)
-
-- 파트너의 포인트 변동 내역
-- 타입별 구분 (earn/spend/withdraw)
-- 은행 정보 (출금시)
-
-#### `member_chats` - 채팅 메시지
-
-- 회원 간 실시간 채팅 메시지
-- 발신자, 수신자, 메시지 내용
-- 생성 시간 기록
-
-#### `partner_withdrawals` - 출금 요청
-
-- 파트너의 출금 신청 정보
-- 계좌 정보 및 상태 관리
-- 관리자 검토 정보
-
-#### `reviews` - 리뷰 시스템
-
-- 파트너 평가 및 리뷰
-- 평점 시스템 (1-5점)
-- 포인트 지급 기록
-
-### ENUM 타입
-
-- `member_role`: 'normal' | 'partner' | 'admin'
-- `partner_status`: 'none' | 'pending' | 'approved' | 'rejected'
-- `member_status`: 'online' | 'offline' | 'matching' | 'in_game'
-- `request_status`: 'pending' | 'in_progress' | 'completed' | 'cancelled'
-- `points_log_type`: 'earn' | 'spend' | 'withdraw'
-- `withdrawal_status`: 'pending' | 'approved' | 'rejected' | 'cancelled'
-
-## 🎯 주요 컴포넌트
-
-### 인증 및 사용자 관리
-
-- `useAuth` - Discord OAuth 인증 훅
-- `Navigation` - 네비게이션 바 (프로필 수정, 포인트 내역 통합)
-- `ProfileEditModal` - 프로필 이미지와 이름 수정
-- `PointsHistoryModal` - 포인트 내역 조회
-- `ChargeModal` - 포인트 충전
-- `DevModeSwitcher` - 개발 모드 전환
-
-### 파트너 시스템
-
-- `PartnerDashboard` - 파트너 전용 대시보드
-- `PartnerCard` - 파트너 카드 컴포넌트
-- `PartnerApplicationForm` - 파트너 신청 폼
-- `PartnerApplicationModal` - 파트너 신청 모달
-- `PartnerRequestModal` - 파트너 의뢰 모달 (ID 기반으로 리팩토링)
-- `PartnerProfileModal` - 파트너 상세 프로필 모달
-- `WithdrawModal` - 포인트 출금 신청 모달
-
-### 채팅 시스템
-
-- `SimpleChatInterface` - 인스타그램 스타일 채팅 인터페이스 (모바일 최적화)
-- `SimpleChatRoom` - 개별 채팅방 컴포넌트 (실시간 메시지, 의뢰 통합)
-- `useSimpleChat` - 채팅방 목록 및 실시간 업데이트 훅
-- `useNotification` - 브라우저 알림 관리 훅
-- `useDevice` - 모바일/데스크톱 감지 훅
-
-### 관리자 시스템
-
-- `AdminDashboard` - 관리자 전용 대시보드
-- 파트너 신청 관리
-- 출금 요청 관리
-- 회원 관리
-
-### 게임 정보
-
-- `GameInfoInput` - 게임 정보 입력 컴포넌트
-- `OnlineIndicator` - 온라인 상태 표시
-
-### UI 컴포넌트
-
-- `Button`, `Input`, `Textarea` - 기본 폼 컴포넌트
-- `Modal`, `Toast` - 모달 및 알림
-- `Typography`, `Flex`, `Grid` - 레이아웃 컴포넌트
-- `Avatar` - 사용자 아바타
-
-## 📱 페이지 구조
-
-- `/` - 메인 페이지 (파트너 목록)
-- `/login` - 로그인 페이지
-- `/partners` - 전체 파트너 목록
-- `/partners/[id]` - 파트너 상세 페이지
-- `/partner/apply` - 파트너 신청 페이지
-- `/partner/dashboard` - 파트너 대시보드
-- `/dashboard/admin` - 관리자 대시보드
-- `/admin` - 관리자 페이지 (간단 버전)
-- `/chat` - 실시간 채팅 페이지 (파라미터로 파트너 선택)
-- `/mypage` - 마이페이지 (포인트 충전 등)
-- `/points` - 포인트 관리 페이지
-
-## 🔒 권한 시스템
-
-### 역할 구분
-
-- **normal** - 일반 사용자
-- **partner** - 승인된 파트너
-- **admin** - 관리자
-
-### 상태 구분
-
-- **none** - 신청 안함
-- **pending** - 신청 대기중
-- **approved** - 승인됨
-- **rejected** - 거절됨
-
-## 🎨 스타일링
-
-- **Tailwind CSS** 사용
-- **반응형 디자인** (모바일 우선)
-- **다크 모드 지원** 준비
-- **일관된 디자인 시스템**
-
-## 🧪 테스팅
-
-```bash
-# 단위 테스트 실행
-pnpm test
-
-# 테스트 커버리지 확인
-pnpm test --coverage
-```
-
-## 💎 포인트 시스템 동작 방식
-
-### 포인트 충전 (회원)
-
-1. **충전 모달**: Navigation의 포인트 클릭 → 충전 모달 열기
-2. **결제 시뮬레이션**: 1,000P~50,000P 단위로 충전 선택
-3. **로그 생성**: `member_points_logs`에 `type: 'earn'` 로그 생성
-4. **포인트 증가**: `members.total_points` 증가
-
-### 포인트 사용 (의뢰)
-
-1. **의뢰 신청**: 파트너 의뢰 시 포인트 차감
-2. **부족 시 자동 충전**: 포인트 부족하면 자동으로 충전 모달 표시
-3. **로그 생성**: `member_points_logs`에 `type: 'spend'` 로그 생성
-4. **포인트 차감**: `members.total_points` 감소
-
-### 포인트 적립 (파트너)
-
-1. 파트너가 의뢰를 완료하면 자동으로 포인트 적립
-2. `partner_points_logs`에 `type: 'earn'` 로그 생성
-3. `partners.total_points` 증가
-
-### 출금 신청 프로세스
-
-1. **신청**: 파트너가 출금 신청 → `partners.total_points`에서 즉시 차감
-2. **대기**: `partner_withdrawals`에 `status: 'pending'` 레코드 생성
-3. **관리자 검토**:
-   - **승인시**: `status: 'approved'` + 출금 완료 로그 생성
-   - **거절시**: `status: 'rejected'` + 포인트 복구 + 복구 로그 생성
-
-### 포인트 표시
-
-- **보유 포인트**: `partners.total_points` (현재 사용 가능한 포인트)
-- **환전 대기**: `partner_withdrawals`에서 `status: 'pending'`인 금액 합계
-- **포인트 히스토리**: `partner_points_logs`의 모든 변동 내역
-
-## 📚 개발 가이드
-
-### 새로운 컴포넌트 추가
-
-1. `src/components/` 디렉토리에 컴포넌트 생성
-2. TypeScript 인터페이스 정의
-3. Tailwind CSS를 사용한 스타일링
-4. 기존 컴포넌트 패턴 따르기
-
-### 새로운 API 추가
-
-1. `src/lib/` 디렉토리에 API 함수 추가
-2. Supabase 클라이언트 사용
-3. 에러 핸들링 및 타입 안전성 확보
-
-### 새로운 페이지 추가
-
-1. `src/routes/` 디렉토리에 파일 생성
-2. TanStack Router 자동 라우트 생성
-3. 필요한 로더 및 액션 정의
-
-### 상태 관리
-
-- **서버 상태**: TanStack Query 사용
-- **클라이언트 상태**: Zustand 사용
-- **폼 상태**: React Hook Form (권장)
-
-### 데이터베이스 스키마 변경
-
-1. Supabase 대시보드에서 스키마 수정
-2. `src/types/database.ts` 타입 정의 업데이트
-3. 관련 컴포넌트 및 API 수정
-
-## 🚀 배포
-
-### Vercel 배포 (권장)
-
-```bash
-# 프로덕션 빌드
-npm run build
-
-# Vercel CLI 사용 또는 GitHub 연동
-```
-
-### 환경 변수 설정
-
-배포 환경에서 다음 환경 변수들을 설정해야 합니다:
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `VITE_DISCORD_CLIENT_ID`
-- `VITE_REDIRECT_URI`
-
-### 빌드 결과물
-
-빌드 결과물은 `dist/` 디렉토리에 생성됩니다.
-
-## 🤝 기여하기
-
-Mate You 프로젝트에 기여해주셔서 감사합니다!
-
-### 기여 프로세스
-
-1. **Fork & Clone**
-
-   ```bash
-   git clone https://github.com/your-username/mate_you.git
-   cd mate_you
-   ```
-
-2. **개발 환경 설정**
-
-   ```bash
-   pnpm install
-   cp .env.example .env
-   # 환경 변수 설정 후
-   pnpm dev
-   ```
-
-3. **기능 브랜치 생성**
-
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-
-4. **개발 및 테스트**
-
-   ```bash
-   pnpm lint        # 코드 품질 검사
-   pnpm test        # 테스트 실행
-   pnpm build       # 빌드 확인
-   ```
-
-5. **커밋 & 푸시**
-
-   ```bash
-   git commit -m "feat: add amazing feature"
-   git push origin feature/amazing-feature
-   ```
-
-6. **Pull Request 생성**
-
-### 커밋 컨벤션
-
-- `feat:` 새로운 기능
-- `fix:` 버그 수정
-- `docs:` 문서 수정
-- `style:` 코드 포맷팅
-- `refactor:` 코드 리팩토링
-- `test:` 테스트 추가/수정
-
-### 코드 스타일
-
-- TypeScript strict mode 준수
-- ESLint + Prettier 설정 따르기
-- 컴포넌트는 적절한 폴더에 분류
-- Barrel exports 사용
-
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
-
-## 🔒 보안
-
-- **Row Level Security (RLS)**: Supabase RLS를 통한 데이터 접근 제어
-- **타입 안전성**: TypeScript를 통한 컴파일 타임 에러 방지
-- **입력 검증**: 모든 사용자 입력에 대한 유효성 검사
-- **권한 기반 접근**: 사용자 역할에 따른 기능 제한
-
-## 💳 환불 규정
-
-### 📋 기본 원칙
-
-**Mate You**는 공정하고 투명한 환불 정책을 통해 사용자의 권익을 보호합니다.
-
-### ⏰ 이용 기간 및 환불 정책
-
-#### 🗓 **12개월 이용 기간**
-
-- **포인트 유효기간**: 충전일로부터 **12개월**
-- **미사용 포인트**: 유효기간 만료 시 자동 소멸
-- **기간 연장**: 추가 충전 시 전체 포인트 유효기간이 최신 충전일로부터 12개월로 연장
-
-#### 💰 **환불 가능 조건**
-
-**즉시 환불 (100%)**
-
-- 충전 후 **7일 이내** + 포인트 **미사용**
-- 서비스 장애로 인한 이용 불가 (전액 보상)
-- 파트너의 서비스 미제공 시 해당 의뢰 금액
-
-**부분 환불 (잔여 포인트)**
-
-- 충전 후 **30일 이내** + 포인트 **부분 사용**
-- 환불 수수료 10% 차감 후 잔여 포인트 환불
-- 계정 해지 시 잔여 포인트 (유효기간 내)
-
-**환불 불가**
-
-- 충전 후 **30일 경과**
-- 포인트 **전체 사용** 완료
-- 유효기간 **만료된 포인트**
-- 부정 사용이 확인된 경우
-
-#### 🔄 **환불 처리 절차**
-
-1. **신청**: 고객센터 또는 마이페이지에서 환불 신청
-2. **검토**: 환불 조건 확인 (영업일 기준 3일)
-3. **승인**: 환불 승인 시 원 결제 수단으로 환불
-4. **완료**: 환불 처리 완료 (영업일 기준 5-7일)
-
-#### ⚠️ **특별 조건**
-
-**파트너 서비스 관련**
-
-- 파트너가 서비스를 제공하지 않을 경우: **전액 환불**
-- 서비스 품질 불만족 시: 리뷰 작성 후 **부분 환불** 검토
-- 의뢰 취소 시 (파트너 수락 전): **즉시 포인트 복구**
-
-**시스템 장애 관련**
-
-- 시스템 장애로 인한 서비스 이용 불가: **이용 연장** 또는 **포인트 보상**
-- 데이터 손실 시: **손실 포인트 복구** + **추가 보상**
-
-#### 📞 **환불 문의**
-
-- **이메일**: contact@mateyou.me
-- **고객센터**: 평일 09:00 - 18:00
-- **처리 시간**: 신청 후 영업일 기준 3-7일
-
-#### 📝 **환불 관련 주의사항**
-
-- 환불은 원 결제 수단으로만 가능합니다
-- 부분 환불 시 환불 수수료가 차감됩니다
-- 허위 신청 시 계정 이용이 제한될 수 있습니다
-- 환불 정책은 사전 공지 후 변경될 수 있습니다
-
-## 📞 지원 및 문의
-
-### 버그 리포트 & 기능 요청
-
-- [GitHub Issues](https://github.com/your-repo/mate_you/issues) - 버그 신고 및 기능 제안
-- [GitHub Discussions](https://github.com/your-repo/mate_you/discussions) - 질문 및 아이디어 토론
-
-### 개발팀 연락처
-
-- **이메일**: dev@mateyou.com
-- **Discord**: [개발자 커뮤니티](https://discord.gg/mateyou)
-
-### 도움이 필요하신가요?
-
-1. 📋 [FAQ 문서](./docs/FAQ.md) 먼저 확인
-2. 🔍 [기존 이슈](https://github.com/your-repo/mate_you/issues) 검색
-3. 💬 새로운 이슈 생성
+> **게이밍 파트너 매칭 플랫폼**의 백엔드 서버 및 자동화 서비스 통합 저장소  
+> TypeScript · Node.js · Deno · Supabase Edge Functions · PostgreSQL · Toss Payments
 
 ---
 
-<div align="center">
+## 목차
 
-### 🎮 **Mate You** 🎮
+1. [프로젝트 개요](#1-프로젝트-개요)
+2. [전체 서비스 아키텍처](#2-전체-서비스-아키텍처)
+3. [기술 스택 및 선정 이유](#3-기술-스택-및-선정-이유)
+4. [기여 영역 — 비즈니스 로직 및 운영 자동화](#4-기여-영역--비즈니스-로직-및-운영-자동화)
+5. [핵심 기능 상세](#5-핵심-기능-상세)
+6. [트러블슈팅 및 설계 결정](#6-트러블슈팅-및-설계-결정)
+7. [환경 설정](#7-환경-설정)
 
-**게이머들을 위한 최고의 파트너 매칭 플랫폼**
+---
 
-[![GitHub stars](https://img.shields.io/github/stars/your-repo/mate_you?style=social)](https://github.com/your-repo/mate_you)
-[![GitHub forks](https://img.shields.io/github/forks/your-repo/mate_you?style=social)](https://github.com/your-repo/mate_you)
+## 1. 프로젝트 개요
 
-Made with ❤️ by the Mate You Team
+MateYou는 게임을 함께할 파트너를 찾는 사용자(Member)와 서비스를 제공하는 파트너(Partner)를 연결하는 플랫폼입니다. 단순 매칭을 넘어 **멤버십 구독 경제**, **실물·디지털 커머스 스토어**, **피드 기반 콘텐츠 플랫폼**, **전면 자동화 운영**을 아우르는 복합 비즈니스 로직을 처리합니다.
 
-</div>
+이 저장소는 두 개의 독립적인 서버 프로세스로 구성됩니다.
 
-## 📁 프로젝트 구조
+| 프로젝트 | 역할 | 런타임 |
+|---|---|---|
+| `project-mateyou-backend` | 인증·결제·매칭 등 메인 REST API 서버 | Node.js / Express |
+| `project-mateyou` | 멤버십·스토어 비즈니스 로직, Cron 자동화, 피드·콘텐츠 제어 | Deno / Supabase Edge Functions |
+
+---
+
+## 2. 전체 서비스 아키텍처
+
+```mermaid
+graph TD
+    subgraph Client
+        WEB["Web / Mobile App"]
+    end
+
+    subgraph "project-mateyou-backend (Main API Server)"
+        EXPRESS["Express.js REST API"]
+        MW["전역 JWT 인증 미들웨어"]
+        ROUTES["25개 도메인 라우터\nauth · payment · partner\nchat · payout · voice-call …"]
+        WORKER_PUSH["Push Queue Worker\nsetInterval 5s"]
+        WORKER_EXPIRY["Request Expiry Worker\nsetInterval 5min"]
+    end
+
+    subgraph "project-mateyou — 기여 영역 (Supabase Edge Functions)"
+        direction TB
+        FEED["posts-feed\n팔로우 피드 + 미디어 접근 제어"]
+        PLIST["posts-list\n멤버십 게시글 + 랜덤 피드"]
+        PPARTNER["posts-partner\n파트너 프로필 피드 + 고정 정렬"]
+        SPROD["store-products\n상품 CRUD + 판매자 약관"]
+        SCART["store-cart\n장바구니 + 묶음·산간 배송비"]
+        SORD["store-orders\n주문·결제·배송추적·협업 정산"]
+        MSUB["membership-subscriptions\n구독 생성·재활성화·접근 해제"]
+        CMEM["cron-membership-renewal\n자동 연장 + 만료 알림 Cron"]
+        CSTORE["cron-store-auto-confirm\n구매확정 자동화 Cron"]
+    end
+
+    subgraph "Supabase (PostgreSQL + Storage)"
+        DB["PostgreSQL"]
+        TRIG["DB Triggers 10개+\n포인트 집계 · 역할 동기화\n출금 처리 · 리뷰 코드"]
+        RPC["RPC 함수\nrpc_store_auto_confirm\nrpc_store_confirm_order"]
+        STORE_ST["Supabase Storage\npost-media · chat-media\nmembership_info_media"]
+    end
+
+    subgraph "External Services"
+        TOSS["Toss Payments\n결제 + 지급대행 JWE"]
+        TRACKER["tracker.delivery\nGraphQL + OAuth\n10개 택배사 통합"]
+        VAPID["Web Push VAPID + FCM"]
+    end
+
+    WEB --> EXPRESS
+    WEB --> FEED & PLIST & PPARTNER & SPROD & SCART & SORD & MSUB & CMEM & CSTORE
+    EXPRESS --> MW --> ROUTES
+    ROUTES --> DB
+    FEED & PLIST & PPARTNER & SPROD & SCART & SORD & MSUB & CMEM & CSTORE --> DB
+    DB --> TRIG
+    CSTORE -->|트랜잭션 위임| RPC
+    SORD -->|OAuth + GraphQL| TRACKER
+    SORD & MSUB --> TOSS
+    WORKER_PUSH --> VAPID
+    STORE_ST <--> FEED & PLIST & PPARTNER & MSUB & CMEM
+```
+
+### 두 레이어의 역할 분리
+
+메인 서버(`project-mateyou-backend`)는 인증·실시간 매칭·지급대행 등 동기 응답이 필요한 API를 담당합니다. **Supabase Edge Functions**는 멤버십·스토어·피드처럼 비즈니스 규칙이 복잡하고 외부 서비스 연동이 많은 도메인을 독립된 서버리스 함수로 분리합니다. Supabase Scheduler(pg_cron)가 Cron을 자동 트리거하므로 별도 작업 서버가 필요하지 않습니다.
+
+---
+
+## 3. 기술 스택 및 선정 이유
+
+**Deno + Supabase Edge Functions** — 표준 Web API(`fetch`, `Request`, `Response`)를 그대로 쓸 수 있어 tracker.delivery GraphQL, Toss Payments, 내부 push-native 함수 등 HTTP 연동이 많은 도메인에서 런타임 종속성이 낮습니다.
+
+**PostgreSQL RPC 기반 트랜잭션 위임** — 자동 구매확정처럼 포인트 적립·상태 변경이 원자적으로 처리되어야 하는 시나리오에서 Supabase 클라이언트의 멀티 스텝 트랜잭션 한계를 극복하는 핵심 선택이었습니다.
+
+**Signed URL 기반 미디어 접근 제어** — Storage 버킷을 Public으로 열지 않고 서버 사이드에서 권한을 동적으로 평가한 뒤 유효 시간이 제한된 URL만 발급합니다. 클라이언트의 직접 Storage 접근을 차단하면서도 권한이 있는 사용자에게는 즉각적인 콘텐츠 노출이 가능합니다.
+
+**보상 트랜잭션 패턴** — Supabase 클라이언트로 멀티 스텝 작업을 처리할 때, 핵심 단계가 실패하면 이전 단계에서 삽입된 레코드를 명시적으로 삭제하여 중간 상태가 남지 않도록 설계했습니다.
+
+---
+
+## 4. 기여 영역 — 비즈니스 로직 및 운영 자동화
+
+아래는 팀 내에서 직접 전담 개발한 기능 영역입니다. 수익 파이프라인의 생성(구독·구매)부터 자동 운영(Cron), 콘텐츠 노출 제어(피드·접근 권한), 운영 효율화(자동 구매확정)까지 **서비스의 수익성과 안정성을 직접 지탱하는 레이어 전체**를 담당했습니다.
+
+| 영역 | 파일 | 규모 | 핵심 책임 |
+|---|---|---|---|
+| 피드 콘텐츠 제어 | `posts-feed.ts` | ~420 LOC | 팔로우 피드, 미디어 접근 제어, 양방향 차단 필터링 |
+| 피드 고급 필터 | `posts-list.ts` | ~1,000 LOC | 멤버십 구독 게시글, tier_rank 기반 권한, 랜덤 피드 |
+| 파트너 프로필 피드 | `posts-partner.ts` | ~230 LOC | 파트너별 피드, 고정 게시글 우선 정렬, Signed URL |
+| 스토어 상품 | `store-products.ts` | ~1,690 LOC | 상품 CRUD, 이미지 업로드, 판매자 약관 관리 |
+| 장바구니 | `store-cart.ts` | ~1,377 LOC | 장바구니, 묶음배송 계산, 산간 지역 추가 배송비 |
+| 주문·정산 | `store-orders.ts` | ~3,617 LOC | 주문 생성, 배송추적, 협업 다자간 포인트 배분 |
+| 멤버십 구독 | `membership-subscriptions.ts` | ~923 LOC | 구독 생성·재활성화, 콘텐츠 접근 해제, 보상 롤백 |
+| 멤버십 Cron | `cron-membership-renewal.ts` | ~778 LOC | 자동 연장, 만료 알림, 중복 알림 방지 |
+| 스토어 Cron | `cron-store-auto-confirm.ts` | ~193 LOC | 구매확정 자동화, PostgreSQL RPC 트랜잭션 위임 |
+
+---
+
+## 5. 핵심 기능 상세
+
+### 5-1. 피드 미디어 접근 제어 엔진
+
+`posts-feed.ts`, `posts-list.ts`, `posts-partner.ts`는 동일한 `processMediaAccess` 함수를 공유하며, 요청 컨텍스트에 따라 **미디어 파일 단위로** 접근 권한을 계산합니다. 이 엔진이 플랫폼의 멤버십 구독 가치를 직접 지탱합니다.
+
+#### 권한 평가 매트릭스
+
+| 사용자 유형 | 무료 게시글 | 유료 게시글 (`point_price > 0`) | 멤버십 전용 (`is_subscribers_only`) |
+|---|---|---|---|
+| Admin / 콘텐츠 소유 파트너 | ✅ 전체 | ✅ 전체 | ✅ 전체 |
+| 비로그인 게스트 | tier_rank = 0만 | ❌ | ❌ |
+| 로그인 (구독 없음) | tier_rank = 0만 | 구매한 인덱스까지만 | ❌ |
+| 로그인 (멤버십 구독) | userTierRank ≥ mediaTierRank | 구독 **또는** 구매 | userTierRank > 0 필수 |
+
+`posts-partner.ts`의 유료 게시글은 구독 **OR** 구매(어느 한 쪽)로 접근 가능하고, `posts-feed.ts`의 구독자 전용 게시글은 멤버십 구독이 반드시 필요합니다. 두 파일이 동일한 함수를 공유하면서 조건 분기를 통해 컨텍스트에 맞는 규칙을 적용합니다.
+
+```typescript
+// posts-partner.ts — 유료: 구독 OR 구매 (어느 한쪽이면 접근)
+if (postPrice > 0 || mediaPrice > 0) {
+  const isPurchased = postUnlockOrder != null && i <= postUnlockOrder;
+  canAccess = hasMembershipAccess || isPurchased;
+}
+
+// posts-feed.ts — 구독자 전용: 구독이 반드시 있어야 함
+if (isSubscribersOnly) {
+  hasMembershipAccess = userTierRank > 0
+    && (mediaTierRank === 0 || userTierRank >= mediaTierRank);
+}
+```
+
+권한이 있으면 Supabase Storage에서 1시간짜리 Signed URL을 발급합니다. **원본 `media_url`은 권한 여부와 관계없이 항상 응답에서 제거**합니다. 원본 경로가 유출되면 Signed URL 체계를 우회할 수 있기 때문입니다.
+
+```typescript
+if (canAccess && media.media_url) {
+  const { data: signed } = await supabase.storage
+    .from("post-media")
+    .createSignedUrl(media.media_url, 3600);
+  media.signed_url = signed?.signedUrl || null;
+}
+delete media.media_url; // 권한과 무관하게 원본 경로는 반드시 제거
+```
+
+#### 멤버십 tier_rank 조회 — N+1 방지
+
+피드의 게시글마다 멤버십을 개별 조회하면 N+1 문제가 발생합니다. 요청 시작 시 해당 유저의 구독 목록을 **단 1회** 조회하여 `Map<partnerId, maxTierRank>`로 캐싱하고, 이후 미디어 권한 계산은 메모리 Map 조회로만 처리합니다. 동일 파트너에 여러 티어의 멤버십을 구독한 경우 자동으로 최고 티어를 적용합니다.
+
+```typescript
+// 구독 목록 단 1회 조회 후 캐싱
+(subscriptions || []).forEach((s) => {
+  const existing = subscribedMembershipTierRanks.get(m.partner_id) ?? 0;
+  // 같은 파트너에 복수 멤버십이 있으면 최고 tier_rank 적용
+  subscribedMembershipTierRanks.set(
+    m.partner_id,
+    Math.max(existing, m.tier_rank ?? 0)
+  );
+});
+```
+
+#### 차단 관계의 양방향 필터링 (`posts-feed.ts`)
+
+"내가 차단한 파트너"뿐 아니라 "나를 차단한 사용자"의 콘텐츠도 피드에서 제거합니다. `member_blocks` 테이블은 `member_code`와 `member_id` 두 가지 식별자가 혼재하므로, 양방향 조회 결과를 Set으로 중복 제거하여 최종 차단 목록을 구성합니다.
+
+#### 고정 게시글 우선 정렬 (`posts-partner.ts`)
+
+파트너 프로필 피드는 `is_pinned` 게시글이 항상 최상단에 표시됩니다. `sortPostsByPinnedAndDate` 함수는 고정 여부를 1차 기준, `published_at`을 2차 기준으로 정렬합니다. `is_pinned`는 boolean · string · number 세 가지 타입이 혼재할 수 있어 모든 truthy 케이스를 명시적으로 처리했습니다.
+
+```typescript
+function sortPostsByPinnedAndDate(posts: any[]): any[] {
+  return posts.sort((a, b) => {
+    const aPinned = a.is_pinned === true || a.is_pinned === 'true' || a.is_pinned === 1;
+    const bPinned = b.is_pinned === true || b.is_pinned === 'true' || b.is_pinned === 1;
+    if (aPinned === bPinned) {
+      return new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime();
+    }
+    return aPinned ? -1 : 1; // 고정 게시글이 위로
+  });
+}
+```
+
+---
+
+### 5-2. 멤버십 구독 시스템 — 10단계 파이프라인
+
+멤버십 구독은 단순한 레코드 삽입이 아닙니다. 포인트 결제, 파트너 수익 적립, 콘텐츠 접근 해제, 환영 미디어 발송까지 **10개의 연쇄 작업**이 순서를 보장하며 실행됩니다.
 
 ```
-src/
-├── components/          # React 컴포넌트들
-│   ├── ui/             # 기본 UI 컴포넌트들 (Button, Input, Modal 등)
-│   ├── features/       # 기능별 컴포넌트들 (Chat, PartnerCard 등)
-│   ├── modals/         # 모달 컴포넌트들
-│   ├── forms/          # 폼 관련 컴포넌트들
-│   └── layouts/        # 레이아웃 컴포넌트들 (Navigation, Footer)
-├── hooks/              # React 커스텀 훅들
-├── store/              # Zustand 상태 관리
-├── lib/                # 유틸리티 라이브러리들
-├── types/              # TypeScript 타입 정의들
-├── routes/             # TanStack Router 라우트들
-├── utils/              # 헬퍼 함수들
-└── integrations/       # 외부 라이브러리 통합
+POST /api-membership-subscriptions
+
+Step  1.  멤버십 유효성 검증 (is_active, 가격 > 0)
+Step  2.  유저 포인트 잔액 확인 (currentPoints ≥ totalPrice)
+Step  3.  중복 구독 확인 → inactive면 재활성화 / 없으면 신규 생성
+Step  4.  member_points_logs INSERT (type='spend', log_id 포함)
+Step  5.  members.total_points 차감
+              ↑ 실패 시 → Step 4 로그 + Step 3 구독 레코드 명시적 삭제(보상 트랜잭션)
+Step  6.  partners.total_points 적립 + partner_points_logs 기록
+Step  7.  album_posts 썸네일에 Signed URL 즉시 발급 → 구독과 동시에 콘텐츠 노출
+Step  8.  membership.subscription_count 증가 (통계 및 수정 제한 목적)
+Step  9.  파트너에게 새 구독 푸시 알림 전송
+Step 10.  구독자에게 환영 메시지 + 멀티미디어 채팅 자동 발송
 ```
 
-### 컴포넌트 분류
+#### 구독 직후 콘텐츠 접근 즉시 해제
 
-#### UI 컴포넌트 (재사용 가능한 기본 컴포넌트)
+멤버십 전용 게시글은 구독 전까지 `album_posts.thumbnail`이 `null`로 저장되어 블러 처리됩니다. Step 7에서 해당 유저의 `album_posts` 레코드를 찾아 Supabase Storage에서 Signed URL을 **동기적으로** 발급합니다. 구독 API 응답이 클라이언트에 도달하는 순간 이미 썸네일이 갱신되어 있으므로, **별도 새로고침 없이 콘텐츠가 열립니다.**
 
-- Button, Input, Textarea, Modal, Avatar
-- Typography, Flex, Grid, LoadingSpinner
-- StarRating, OnlineIndicator, GameBadges
+Step 7의 실패는 구독 자체를 롤백하지 않도록 별도 `try-catch`로 격리했습니다. 썸네일 갱신은 부가 기능이므로 실패가 핵심 거래를 오염시키지 않아야 합니다.
 
-#### 기능 컴포넌트 (비즈니스 로직 포함)
+#### 보상 트랜잭션 패턴
 
-- PartnerCard, PartnerDashboard, SimpleChatInterface
-- SimpleChatRoom, PointsCard, Banner, ToastContainer
-- DeviceInfo, RequestInfo (모바일 전용 컴포넌트)
+Supabase 클라이언트는 멀티 스텝 DB 트랜잭션을 지원하지 않습니다. 포인트 차감(Step 5)이 실패하면 이미 삽입된 포인트 로그(Step 4)와 구독 레코드(Step 3)를 명시적으로 삭제합니다. 중간 상태가 DB에 남지 않도록 하는 이 패턴은 스토어 구매, 멤버십 연장 등 포인트가 오가는 모든 핵심 흐름에 일관되게 적용되어 있습니다.
 
-#### 모달 컴포넌트
+```typescript
+if (memberUpdateError) {
+  // Step 4 롤백: 포인트 로그 삭제
+  await supabase.from('member_points_logs').delete()
+    .eq('member_id', user.id).eq('log_id', logId);
+  // Step 3 롤백: 구독 레코드 삭제
+  await supabase.from('membership_subscriptions').delete()
+    .eq('id', subscription.id);
+  throw memberUpdateError;
+}
+```
 
-- ChargeModal, ProfileEditModal, PointsHistoryModal
-- PartnerRequestModal, PartnerProfileModal
-- 각종 신청/관리 모달들
+#### 구독 상태 필터링 — 자동 연장 ON/OFF 분기
 
-#### 폼 컴포넌트
+`GET /api-membership-subscriptions`는 유효한 구독만 반환해야 합니다. 자동 연장이 켜진 구독은 만료일이 지나도 Cron이 갱신하므로 항상 유효하고, 꺼진 구독은 만료일이 오늘 이후인 경우에만 표시합니다.
 
-- PartnerApplicationForm, GameInfoInput, ImageUpload
+```typescript
+const validSubscriptions = subscriptions.filter((sub) => {
+  if (sub.auto_renewal_enabled) return true;         // 자동 연장 ON → 항상 유효
+  return sub.expired_at >= todayStr;                 // 자동 연장 OFF → 만료일 기준
+});
+```
 
-#### 레이아웃 컴포넌트
+---
 
-- Navigation, Footer, MobileMenu, MobileTabBar
-- DeviceWrapper, ResponsiveContainer (반응형 래퍼)
+### 5-3. 멤버십 자동 갱신 Cron — `cron-membership-renewal.ts`
 
-### 상태 관리
+매일 자동으로 실행되며 **파트너의 반복 수익을 무중단으로 유지**합니다. 수동 개입 없이 결제와 콘텐츠 제공이 자동으로 연속되는 것이 이 모듈의 핵심 가치입니다.
 
-- **Supabase Realtime**: 실시간 데이터 동기화 (채팅, 의뢰 상태)
-- **React Query**: 서버 상태 관리 및 캐싱
-- **Zustand**: 클라이언트 상태 관리 (인증, 디바이스 정보)
-- **Context**: 테마, 토스트 등 글로벌 상태
+```
+Phase 1 — 자동 연장 처리
+  대상: status='active', auto_renewal_enabled=true, expired_at=오늘
 
-### 최근 추가된 훅들
+  포인트 충분 → 차감 + 만료일 +1개월 + 파트너 수익 적립
+               → 연장 성공 푸시 알림
+               → renewal_message / renewal_media_info → 갱신 환영 채팅 자동 발송
 
-- `useNotification` - 브라우저 알림 권한 관리 및 알림 표시
-- `useDevice` - 모바일/데스크톱 감지 및 화면 크기 반응형 처리
-- `useSimpleChat` - 채팅방 목록 및 읽지 않은 메시지 수 관리
-- `usePartnerRequests` - 파트너 의뢰 수락/거절 처리 및 자동 메시지 전송
+  포인트 부족 → status='canceled' + 연장 실패 푸시 알림
+
+Phase 2 — 만료 예정 알림
+  대상: status='active', auto_renewal_enabled=false, expired_at=내일
+  → "내일 만료됩니다" 푸시 알림 (재구독 유도)
+```
+
+#### 자동 갱신 시 채팅 미디어 전송
+
+파트너가 멤버십에 `renewal_message` 또는 `renewal_media_info`를 설정해두면, 갱신 완료 시 파트너가 사전 등록한 메시지와 미디어를 구독자 채팅방에 자동으로 발송합니다. `membership_info_media` 버킷에서 파일을 다운로드하여 `chat-media` 버킷에 재업로드하는 방식이므로, 파트너는 수동 개입 없이 **자동화된 구독자 케어**가 가능합니다. 이는 구독 유지율(retention)을 높이는 데 직접 기여합니다.
+
+#### 알림 중복 방지 — dismissed_at 내재화
+
+크론잡이 매일 실행되는 특성상 같은 알림이 반복 발송될 수 있습니다. 별도 알림 이력 테이블을 만드는 대신, `membership_subscriptions` 레코드에 `expiry_notification_dismissed_at`, `renewal_failed_notification_dismissed_at`, `renewed_notification_dismissed_at` 세 컬럼을 추가했습니다.
+
+사용자가 알림을 확인하면 `PATCH` 요청으로 해당 값이 기록됩니다. Cron 쿼리는 이 컬럼이 `null`인 레코드만 조회하므로, 한 번 확인된 알림은 다시 발송되지 않습니다.
+
+```typescript
+// 아직 확인하지 않은 만료 예정 구독만 조회
+.is('expiry_notification_dismissed_at', null)  // 확인 전 레코드만
+.gte('expired_at', today)
+.lte('expired_at', threeDaysLater)             // 3일 이내 만료 예정
+```
+
+기존 테이블에 상태를 내재화하여 별도 테이블 없이 **정확히 1회 발송을 보장**하고 쿼리 복잡도를 최소화했습니다.
+
+---
+
+### 5-4. 스토어 자동 구매확정 Cron — `cron-store-auto-confirm.ts`
+
+배송 완료 후 3일이 경과한 주문을 자동으로 구매확정하고 파트너에게 포인트를 적립합니다. 이 모듈의 핵심 설계 결정은 **비즈니스 로직을 Edge Function이 아닌 PostgreSQL RPC 함수에 완전히 위임**한 것입니다.
+
+```typescript
+// Edge Function은 RPC를 트리거하는 얇은 진입점
+const { data: rpcResult, error: rpcError } = await supabase.rpc(
+  'rpc_store_auto_confirm',
+  { p_days_threshold: daysThreshold }
+);
+```
+
+**RPC를 선택한 이유:** 구매확정은 `store_orders.is_confirmed` 변경, `store_order_items.status` 변경, `partners.store_points` 적립, `partner_points_logs` 기록이 하나의 원자 단위로 처리되어야 합니다. Supabase 클라이언트로 순차 실행하면 중간 실패 시 불완전한 상태가 남고, Cron이 재실행될 때 포인트 이중 적립이 발생합니다. PostgreSQL 트랜잭션으로 위임하면 이 모든 문제가 DB 레벨에서 자동으로 해결됩니다.
+
+관리자용 수동 확정(`PUT`)도 동일한 `rpc_store_confirm_order`를 사용하여 **자동/수동 경로의 로직을 일원화**했습니다. 로직이 한 곳(RPC 함수)에만 존재하므로 수정이나 버그 수정이 양쪽에 자동으로 적용됩니다.
+
+---
+
+### 5-5. 스토어 장바구니 — 묶음배송과 산간 지역 배송비 계산
+
+`store-cart.ts`는 단순한 목록 관리를 넘어 **복잡한 배송비 계산 엔진**을 내장합니다.
+
+#### 묶음배송 그룹핑 로직
+
+`is_bundle_available=true` 상품들은 같은 출처(파트너 직접 상품 / 협업 상품)끼리 묶어 가장 비싼 배송비 하나만 부과합니다. 4가지 경우를 별도로 처리합니다.
+
+```
+파트너 묶음 상품   → max(shipping_fee_base)          — 1회만 부과
+파트너 비묶음 상품  → Σ shipping_fee_base             — 상품별 합산
+협업 묶음 상품    → max(shipping_fee_base)          — 1회만 부과
+협업 비묶음 상품   → Σ shipping_fee_base             — 상품별 합산
+```
+
+#### 산간 지역 추가 배송비
+
+배송지 우편번호를 파싱하여 제주도(63000–63644)와 울릉도(40200–40240)를 판별하고, 해당 지역이면 `shipping_fee_remote`를 기본 배송비에 추가합니다. 묶음배송 적용 시에도 `baseFee + remoteFee` 합산 기준으로 max를 취하여 산간 추가 배송비가 정확히 반영됩니다.
+
+```typescript
+function isRemoteArea(postalCode: string): boolean {
+  const code = parseInt(postalCode.replace(/\D/g, ''), 10);
+  if (code >= 63000 && code <= 63644) return true; // 제주도
+  if (code >= 40200 && code <= 40240) return true; // 울릉도
+  return false;
+}
+
+// 묶음 최대 배송비도 baseFee + remoteFee 합산 기준으로 비교
+const getItemShippingFee = (item: CartItem) =>
+  (item.product.shipping_fee_base || 0) +
+  (isRemote ? item.product.shipping_fee_remote || 0 : 0);
+```
+
+---
+
+### 5-6. 스토어 주문 정산 — 협업 다자간 수익 배분
+
+협업 상품은 동일 원본 상품에 여러 파트너가 참여하여 판매 수익을 나눕니다. `share_rate`(전체 수익 배분율)와 `distribution_rate`(개인 지급율)의 2단계 구조를 구현했습니다.
+
+```typescript
+// share_rate 설정 시 — 다자 배분 모드
+// 예: totalAmount=10만원, shareRate=60%, distRate=80% → 48,000원 적립
+const partnerAmount = Math.floor(
+  totalAmount * (shareRate / 100) * (distRate / 100)
+);
+
+// share_rate 전원 null — 개별 정산 모드 (주문 파트너에게만)
+const settledAmount = Math.floor(totalAmount * (distRate / 100));
+```
+
+**멱등성 보장:** `log_id = store_sale_{orderId}_{partnerId}_{productId}` 결정론적 고유 키를 사용합니다. 적립 전 `partner_points_logs`에서 동일 `log_id`를 확인하고, 이미 존재하면 건너뜁니다. Webhook 재전송이나 Cron 중복 실행 상황에서도 정산이 정확히 1회만 처리됩니다.
+
+---
+
+## 6. 트러블슈팅 및 설계 결정
+
+### [이슈 1] 구독 완료 후 콘텐츠 노출 지연
+
+**문제:** 멤버십 구독 API 응답 후 프론트엔드가 피드를 재호출해야 구독 전용 콘텐츠가 노출되었습니다. 이 사이에 일시적인 "접근 불가" 상태가 표시되어 UX를 저해했습니다.
+
+**해결:** 구독 완료 핸들러(Step 7) 내에서 `album_posts` 썸네일 갱신을 동기적으로 처리했습니다. 응답이 클라이언트에 도달하는 시점에 이미 Signed URL이 DB에 기록되어 있어 즉각 노출이 가능합니다. 갱신 실패는 `try-catch`로 격리하여 핵심 구독 흐름을 보호했습니다.
+
+### [이슈 2] 자동 갱신 Cron의 알림 중복 발송
+
+**문제:** 매일 실행되는 Cron이 만료 예정 알림을 D-3, D-2, D-1에 매일 동일하게 재발송했습니다.
+
+**해결:** `membership_subscriptions`에 `*_notification_dismissed_at` 컬럼을 추가하고 크론 쿼리에 `.is(..., null)` 조건을 적용했습니다. 사용자가 알림을 확인하면 `PATCH`로 기록되고, 다음 Cron 실행부터 해당 레코드는 조회 대상에서 제외됩니다. 별도 이력 테이블 없이 기존 구독 레코드에 상태를 내재화했습니다.
+
+### [이슈 3] 자동 구매확정 Cron의 포인트 이중 적립
+
+**문제:** Cron 재실행 또는 중복 트리거 시 파트너 포인트가 이중으로 적립될 수 있었습니다.
+
+**해결:** 구매확정 로직 전체를 PostgreSQL RPC 함수로 이전했습니다. DB 트랜잭션 내에서 `is_confirmed=false` 확인, 포인트 적립, 상태 변경이 원자적으로 처리되어 중간 실패 시 전체가 롤백됩니다. Edge Function은 RPC를 호출하는 얇은 진입점으로만 남겨, 비즈니스 로직과 실행 진입점을 분리했습니다.
+
+### [이슈 4] 협업 정산의 멱등성 결여
+
+**문제:** 결제 완료 Webhook 중복 수신 시 여러 파트너에게 정산 포인트가 이중으로 적립되었습니다.
+
+**해결:** `log_id = store_sale_{orderId}_{partnerId}_{productId}` 결정론적 고유 키를 도입하고, 적립 전 `partner_points_logs`에서 동일 `log_id`의 존재 여부를 확인합니다. 어떤 경로로 중복 실행되더라도 정산이 정확히 1회만 처리됩니다.
+
+### [이슈 5] 배송추적 외부 API 레이턴시 및 과호출
+
+**문제:** 주문 상세 조회마다 tracker.delivery API를 호출하면 응답 레이턴시가 증가하고 API 요금이 과다 부과됩니다.
+
+**해결:** 2단계 캐싱을 적용했습니다. OAuth 토큰은 `만료 시각 - 60초` 기준으로 인메모리 캐시합니다. 배송 이벤트는 `store_shipments.delivery_updated_at`이 5분 이내면 DB 캐시를 반환하고, 5분 초과 시에만 외부 API를 호출 후 결과를 DB에 갱신합니다. `registerTrackWebhook` Mutation으로 배달 완료 이벤트를 Webhook으로 수신하여 폴링 의존도도 낮췄습니다.
+
+### [이슈 6] `is_pinned` 타입 불일치로 인한 정렬 오류
+
+**문제:** `posts-partner.ts`에서 고정 게시글이 최상단에 표시되지 않는 경우가 있었습니다. DB 컬럼이 상황에 따라 `true`, `'true'`, `1` 세 가지 형태로 반환되었기 때문입니다.
+
+**해결:** `sortPostsByPinnedAndDate` 함수에서 세 가지 타입을 모두 명시적으로 처리했습니다. TypeScript 타입 시스템만 믿지 않고 런타임 값을 방어적으로 검사하는 패턴을 피드, 피드 리스트, 파트너 피드 전체에 일관되게 적용했습니다.
+
+```typescript
+const isPinned = post.is_pinned === true || post.is_pinned === 'true' || post.is_pinned === 1;
+```
+
+---
+
+## 7. 환경 설정
+
+```bash
+# ── Server ──────────────────────────────────────────
+PORT=4000
+NODE_ENV=production
+
+# ── Supabase ────────────────────────────────────────
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# ── Toss Payments (일반 결제) ───────────────────────
+TOSS_PAY_PROD_SECRET_KEY=live_sk_...
+
+# ── Toss Payments (지급대행) ────────────────────────
+TOSS_API_PROD_SECRET_KEY=live_gsk_...
+TOSS_API_PROD_SECURITY_KEY=<64자 hex>
+TOSS_USE_PYTHON_ENCRYPTION=false   # Node.js jose(기본) vs Python authlib
+
+# ── 배송추적 (tracker.delivery OAuth) ───────────────
+TRACKER_DELIVERY_CLIENT_ID=...
+TRACKER_DELIVERY_CLIENT_SECRET=...
+
+# ── Web Push (VAPID) ────────────────────────────────
+VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:noreply@mateyou.com
+
+# ── Worker 튜닝 ──────────────────────────────────────
+PUSH_QUEUE_INTERVAL=5000           # Push Queue 폴링 간격 (ms)
+PUSH_QUEUE_BATCH_SIZE=50           # 1회 처리 최대 건수
+ENABLE_PUSH_QUEUE_WORKER=true
+REQUEST_EXPIRY_INTERVAL=300000     # 의뢰 만료 체크 간격 (ms)
+ENABLE_REQUEST_EXPIRY_WORKER=true
+```
+
+> **보안 주의:** `live_` 접두사가 없는 test 키는 서버 시작 시 자동 거부되며 `console.error`로 명시적 경고가 출력됩니다.
+
+---
+
+## Tech Stack Summary
+
+| 분류 | 기술 |
+|---|---|
+| Runtime — API Server | Node.js (ESM) + Express.js |
+| Runtime — Edge Functions | Deno + Supabase Edge Functions |
+| Language | TypeScript |
+| Database | PostgreSQL (via Supabase), RPC 트랜잭션, Trigger 10개+ |
+| Auth | Supabase Auth + JWT 미들웨어 |
+| Payment | Toss Payments (결제 + 지급대행, JWE / AES-256-GCM) |
+| Push | Web Push Protocol (VAPID) + FCM |
+| Delivery | tracker.delivery GraphQL API (OAuth 인메모리 캐싱) |
+| Storage | Supabase Storage (Signed URL 기반 접근 제어) |
+| Scheduling | Supabase Scheduler (pg_cron) |
+| Real-time | Supabase Realtime + WebRTC (voice / video) |
+| API Docs | Swagger (swagger-jsdoc) |
