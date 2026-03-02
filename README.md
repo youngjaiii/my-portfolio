@@ -76,37 +76,7 @@ mateyou/
 
 ## 3. System Architecture
 
-```mermaid
-graph TD
-WEB["Web / Mobile App"]
-subgraph Main_Server [NestJS Main Server]
-NEST["NestJS App"]
-NEST --> MOD["25+ Modules (Auth/Chat/Match)"]
-end
-subgraph Jun_Functions [Supabase Edge Functions: 이준 전담]
-S_COM["Commerce: Products/Orders"]
-S_FEED["Content: Feed/Posts"]
-S_MEM["Membership: Subscriptions"]
-S_CRON["Automation: Cron Jobs"]
-end
-DB[("PostgreSQL (Supabase)")]
-STG["Supabase Storage"]
-WEB -->|"REST API"| NEST
-WEB -->|"Direct Call"| S_COM
-WEB -->|"Direct Call"| S_FEED
-WEB -->|"Direct Call"| S_MEM
-
-MOD --> DB
-S_COM --> DB
-S_FEED --> DB
-S_MEM --> DB
-S_CRON --> DB
-
-DB --> STG
-S_COM --> TOSS["Toss/Delivery API"]
-S_MEM --> TOSS
-S_CRON --> STG
-```
+<img width="8192" height="2151" alt="Mermaid Chart - Create complex, visual diagrams with text -2026-03-02-055518" src="https://github.com/user-attachments/assets/6af619e7-0ade-48e8-9b8b-437b21620a09" />
 
 ### 두 서버의 책임 분리 원칙
 
