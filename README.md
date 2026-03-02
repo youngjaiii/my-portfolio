@@ -77,77 +77,50 @@ mateyou/
 ## 3. System Architecture
 
 ```mermaid
+## 🏗 System Architecture
+
+```mermaid
 graph TD
     %% 1. Client Layer
     WEB["Web / Mobile App"]
 
-    %% 2. Main Server (NestJS)
-    subgraph Main_Server [project-mateyou-backend: NestJS Main Server]
-        NEST["NestJS Application"]
-        MW["JWT Auth Guard"]
-        MOD["25개 도메인 모듈<br/>auth · payment · partner<br/>chat · voice-call · payout …"]
-        PQW["Push Queue Worker"]
-        REW["Request Expiry Worker"]
+    %% 2. Main Server
+    subgraph Main_Server [NestJS Main Server]
+        NEST["NestJS App"]
+        NEST --> MOD["25+ Modules (Auth/Chat/Match)"]
     end
 
-    %% 3. 이준 기여 영역 (Supabase Edge Functions)
-    subgraph Jun_Contribution [project-mateyou: Supabase Edge Functions]
-        direction TB
-        subgraph Commerce
-            SPROD["store-products"]
-            SCART["store-cart"]
-            SORD["store-orders"]
-        end
-        subgraph Feed_Content [Feed & Content]
-            FEED["posts-feed"]
-            PLIST["posts-list"]
-            PPART["posts-partner"]
-        end
-        subgraph Membership_Auto [Membership & Automation]
-            MSUB["membership-subscriptions"]
-            CMEM["cron-membership-renewal"]
-            CCONF["cron-store-auto-confirm"]
-        end
+    %% 3. 이준 전담 개발 영역 (Supabase Edge Functions)
+    %% 복잡한 중첩을 제거하고 기능별로 그룹화했습니다.
+    subgraph Jun_Functions [Supabase Edge Functions: 이준 전담]
+        S_COM["Commerce: Products/Orders"]
+        S_FEED["Content: Feed/Posts"]
+        S_MEM["Membership: Subscriptions"]
+        S_CRON["Automation: Cron Jobs"]
     end
 
-    %% 4. Infrastructure & External
+    %% 4. Infrastructure
     DB[("PostgreSQL (Supabase)")]
     STG["Supabase Storage"]
-    TOSS["Toss Payments"]
-    TRACK["Delivery Tracker"]
 
-    %% --- Connections ---
-    
-    %% Client to Servers
+    %% 5. Connections (GitHub 최적화를 위해 다중연결 & 삭제)
     WEB -->|"REST API"| NEST
-    WEB -->|"Edge Functions Call"| SPROD
-    WEB -->|"Edge Functions Call"| FEED
-    WEB -->|"Edge Functions Call"| MSUB
+    WEB -->|"Direct Call"| S_COM
+    WEB -->|"Direct Call"| S_FEED
+    WEB -->|"Direct Call"| S_MEM
 
-    %% Internal NestJS
-    NEST --> MW
-    MW --> MOD
-    PQW -->|"Web Push"| VAPID["VAPID/FCM"]
-
-    %% Data Flow (Simplified for GitHub Layout)
     MOD --> DB
-    SPROD --> DB
-    SCART --> DB
-    SORD --> DB
-    FEED --> DB
-    PLIST --> DB
-    PPART --> DB
-    MSUB --> DB
-    CMEM --> DB
-    CCONF --> DB
+    S_COM --> DB
+    S_FEED --> DB
+    S_MEM --> DB
+    S_CRON --> DB
 
-    %% External & Storage
     DB --> STG
-    SORD --> TRACK
-    SORD --> TOSS
-    MSUB --> TOSS
-    CMEM --> STG
-    CCONF --> DB
+    
+    %% External
+    S_COM --> TOSS["Toss/Delivery API"]
+    S_MEM --> TOSS
+    S_CRON --> STG
 ```
 
 ### 두 서버의 책임 분리 원칙
