@@ -78,62 +78,85 @@ mateyou/
 
 ```mermaid
 graph TD
-    subgraph "Client Layer"
+    subgraph Client_Layer [Client Layer]
         WEB["Web / Mobile App"]
     end
 
-    subgraph "project-mateyou-backend — NestJS Main Server"
+    subgraph NestJS_Server [project-mateyou-backend: NestJS Main Server]
         NEST["NestJS Application"]
         MW["JWT Auth Guard"]
-        MOD["25개 도메인 모듈\nauth · payment · partner\nchat · voice-call · payout …"]
-        PQW["Push Queue Worker\nsetInterval 5s · VAPID"]
-        REW["Request Expiry Worker\nsetInterval 5min"]
+        MOD["25개 도메인 모듈<br/>auth · payment · partner<br/>chat · voice-call · payout …"]
+        PQW["Push Queue Worker<br/>setInterval 5s · VAPID"]
+        REW["Request Expiry Worker<br/>setInterval 5min"]
     end
 
-    subgraph "project-mateyou — Supabase Edge Functions  ★ 이준 기여 영역"
-        subgraph "Commerce"
-            SPROD["store-products\n상품 CRUD + 판매자 약관"]
-            SCART["store-cart\n장바구니 + 묶음·산간 배송비"]
-            SORD["store-orders\n주문·결제·배송추적·협업 정산"]
+    subgraph Jun_Contribution [project-mateyou: Supabase Edge Functions - 이준 기여 영역]
+        subgraph Commerce
+            SPROD["store-products<br/>상품 CRUD + 판매자 약관"]
+            SCART["store-cart<br/>장바구니 + 배송비"]
+            SORD["store-orders<br/>주문·결제·배송·정산"]
         end
-        subgraph "Feed & Content"
-            FEED["posts-feed\n팔로우 피드 + 미디어 접근 제어"]
-            PLIST["posts-list\n멤버십 구독 게시글 필터링"]
-            PPART["posts-partner\n파트너 프로필 피드 + 고정 정렬"]
+        subgraph Feed_Content [Feed & Content]
+            FEED["posts-feed<br/>팔로우 피드 + 미디어 접근 제어"]
+            PLIST["posts-list<br/>멤버십 구독 필터링"]
+            PPART["posts-partner<br/>파트너 프로필 피드"]
         end
-        subgraph "Membership"
-            MSUB["membership-subscriptions\n구독 생성·재활성화·콘텐츠 해제"]
+        subgraph Membership
+            MSUB["membership-subscriptions<br/>구독 생성·재활성화"]
         end
-        subgraph "Automation — Cron"
-            CMEM["cron-membership-renewal\n자동 갱신 + 만료 알림"]
-            CCONF["cron-store-auto-confirm\n구매확정 자동화"]
+        subgraph Automation_Cron [Automation: Cron]
+            CMEM["cron-membership-renewal<br/>자동 갱신 + 만료 알림"]
+            CCONF["cron-store-auto-confirm<br/>구매확정 자동화"]
         end
     end
 
-    subgraph "Supabase Platform"
-        DB[("PostgreSQL\nTriggers 10개+\nRPC Functions")]
-        STG["Supabase Storage\npost-media · chat-media\nmembership_info_media"]
-        SCH["Supabase Scheduler\npg_cron — 매일 자정"]
+    subgraph Supabase_Platform [Supabase Platform]
+        DB[("PostgreSQL<br/>Triggers 10개+<br/>RPC Functions")]
+        STG["Supabase Storage<br/>post-media · chat-media"]
+        SCH["Supabase Scheduler<br/>pg_cron — 매일 자정"]
     end
 
-    subgraph "External Services"
-        TOSS["Toss Payments\n결제 + 지급대행 JWE"]
-        TRACK["tracker.delivery\nGraphQL + OAuth\n10개 택배사 통합"]
-        VAPID["Web Push\nVAPID + FCM"]
+    subgraph External_Services [External Services]
+        TOSS["Toss Payments<br/>결제 + 지급대행 JWE"]
+        TRACK["tracker.delivery<br/>GraphQL + OAuth"]
+        VAPID["Web Push<br/>VAPID + FCM"]
     end
 
-    WEB -->|"REST API\n인증·매칭·채팅·결제"| NEST
-    WEB -->|"Direct Function Call\n스토어·피드·멤버십"| SPROD & SCART & SORD
-    WEB -->|"Direct Function Call"| FEED & PLIST & PPART & MSUB
-    NEST --> MW --> MOD
-    MOD & SPROD & SCART & SORD & FEED & PLIST & PPART & MSUB & CMEM & CCONF --> DB
+    %% Connections
+    WEB -->|"REST API"| NEST
+    WEB -->|"Direct Call"| SPROD
+    WEB -->|"Direct Call"| SCART
+    WEB -->|"Direct Call"| SORD
+    WEB -->|"Direct Call"| FEED
+    WEB -->|"Direct Call"| PLIST
+    WEB -->|"Direct Call"| PPART
+    WEB -->|"Direct Call"| MSUB
+
+    NEST --> MW
+    MW --> MOD
+    
+    MOD --> DB
+    SPROD --> DB
+    SCART --> DB
+    SORD --> DB
+    FEED --> DB
+    PLIST --> DB
+    PPART --> DB
+    MSUB --> DB
+    CMEM --> DB
+    CCONF --> DB
+
     DB --> STG
-    SCH -->|"자동 트리거"| CMEM & CCONF
-    SORD -->|"GraphQL + OAuth"| TRACK
-    SORD & MSUB --> TOSS
+    SCH -->|"자동 트리거"| CMEM
+    SCH -->|"자동 트리거"| CCONF
+    
+    SORD --> TRACK
+    SORD --> TOSS
+    MSUB --> TOSS
     PQW --> VAPID
-    CMEM & MSUB <-->|"환영·갱신 미디어 복사"| STG
-    CCONF -->|"트랜잭션 위임"| DB
+    
+    CMEM <--> STG
+    MSUB <--> STG
 ```
 
 ### 두 서버의 책임 분리 원칙
@@ -404,6 +427,8 @@ TRACKER_DELIVERY_CLIENT_SECRET=...
 ---
 
 <div align="center">
+
+**이준 (Lee Jun)** · Backend Engineer
 
 `TypeScript` `NestJS` `Deno` `Supabase` `PostgreSQL` `Toss Payments`
 
