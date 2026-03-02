@@ -85,13 +85,15 @@ graph TD
     subgraph NestJS_Server [project-mateyou-backend: NestJS Main Server]
         NEST["NestJS Application"]
         MW["JWT Auth Guard"]
-        MOD["25개 도메인 모듈<br/>(auth · payment · partner · chat 등)"]
+        MOD["25개 도메인 모듈<br/>auth · payment · partner<br/>chat · voice-call · payout …"]
+        PQW["Push Queue Worker<br/>setInterval 5s · VAPID"]
+        REW["Request Expiry Worker<br/>setInterval 5min"]
     end
 
-    subgraph Jun_Contribution [project-mateyou: Supabase Edge Functions - 이준 전담 개발 영역]
+    subgraph Jun_Contribution [project-mateyou: Supabase Edge Functions - 이준 기여 영역]
         subgraph Commerce
             SPROD["store-products<br/>상품 CRUD + 판매자 약관"]
-            SCART["store-cart<br/>장바구니 + 배송비 로직"]
+            SCART["store-cart<br/>장바구니 + 배송비"]
             SORD["store-orders<br/>주문·결제·배송·정산"]
         end
         subgraph Feed_Content [Feed & Content]
@@ -109,26 +111,31 @@ graph TD
     end
 
     subgraph Supabase_Platform [Supabase Platform]
-        DB[("PostgreSQL<br/>Triggers + RPC")]
-        STG["Supabase Storage<br/>Media Assets"]
-        SCH["Supabase Scheduler<br/>pg_cron"]
+        DB[("PostgreSQL<br/>Triggers 10개+<br/>RPC Functions")]
+        STG["Supabase Storage<br/>post-media · chat-media"]
+        SCH["Supabase Scheduler<br/>pg_cron — 매일 자정"]
     end
 
     subgraph External_Services [External Services]
-        TOSS["Toss Payments<br/>결제 + 지급대행"]
-        TRACK["tracker.delivery<br/>배송 추적 API"]
+        TOSS["Toss Payments<br/>결제 + 지급대행 JWE"]
+        TRACK["tracker.delivery<br/>GraphQL + OAuth"]
+        VAPID["Web Push<br/>VAPID + FCM"]
     end
 
-    %% 연결선 정의
+    %% Connections
     WEB -->|"REST API"| NEST
     WEB -->|"Direct Call"| SPROD
+    WEB -->|"Direct Call"| SCART
+    WEB -->|"Direct Call"| SORD
     WEB -->|"Direct Call"| FEED
+    WEB -->|"Direct Call"| PLIST
+    WEB -->|"Direct Call"| PPART
     WEB -->|"Direct Call"| MSUB
-    
+
     NEST --> MW
     MW --> MOD
-    MOD --> DB
     
+    MOD --> DB
     SPROD --> DB
     SCART --> DB
     SORD --> DB
@@ -138,16 +145,18 @@ graph TD
     MSUB --> DB
     CMEM --> DB
     CCONF --> DB
-    
+
     DB --> STG
-    SCH -->|"Scheduled Trigger"| CMEM
-    SCH -->|"Scheduled Trigger"| CCONF
+    SCH -->|"자동 트리거"| CMEM
+    SCH -->|"자동 트리거"| CCONF
     
     SORD --> TRACK
     SORD --> TOSS
     MSUB --> TOSS
+    PQW --> VAPID
     
     CMEM <--> STG
+    MSUB <--> STG
 ```
 
 
