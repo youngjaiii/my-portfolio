@@ -77,50 +77,35 @@ mateyou/
 ## 3. System Architecture
 
 ```mermaid
-## 🏗 System Architecture
-
-```mermaid
 graph TD
-    %% 1. Client Layer
-    WEB["Web / Mobile App"]
+WEB["Web / Mobile App"]
+subgraph Main_Server [NestJS Main Server]
+NEST["NestJS App"]
+NEST --> MOD["25+ Modules (Auth/Chat/Match)"]
+end
+subgraph Jun_Functions [Supabase Edge Functions: 이준 전담]
+S_COM["Commerce: Products/Orders"]
+S_FEED["Content: Feed/Posts"]
+S_MEM["Membership: Subscriptions"]
+S_CRON["Automation: Cron Jobs"]
+end
+DB[("PostgreSQL (Supabase)")]
+STG["Supabase Storage"]
+WEB -->|"REST API"| NEST
+WEB -->|"Direct Call"| S_COM
+WEB -->|"Direct Call"| S_FEED
+WEB -->|"Direct Call"| S_MEM
 
-    %% 2. Main Server
-    subgraph Main_Server [NestJS Main Server]
-        NEST["NestJS App"]
-        NEST --> MOD["25+ Modules (Auth/Chat/Match)"]
-    end
+MOD --> DB
+S_COM --> DB
+S_FEED --> DB
+S_MEM --> DB
+S_CRON --> DB
 
-    %% 3. 이준 전담 개발 영역 (Supabase Edge Functions)
-    %% 복잡한 중첩을 제거하고 기능별로 그룹화했습니다.
-    subgraph Jun_Functions [Supabase Edge Functions: 이준 전담]
-        S_COM["Commerce: Products/Orders"]
-        S_FEED["Content: Feed/Posts"]
-        S_MEM["Membership: Subscriptions"]
-        S_CRON["Automation: Cron Jobs"]
-    end
-
-    %% 4. Infrastructure
-    DB[("PostgreSQL (Supabase)")]
-    STG["Supabase Storage"]
-
-    %% 5. Connections (GitHub 최적화를 위해 다중연결 & 삭제)
-    WEB -->|"REST API"| NEST
-    WEB -->|"Direct Call"| S_COM
-    WEB -->|"Direct Call"| S_FEED
-    WEB -->|"Direct Call"| S_MEM
-
-    MOD --> DB
-    S_COM --> DB
-    S_FEED --> DB
-    S_MEM --> DB
-    S_CRON --> DB
-
-    DB --> STG
-    
-    %% External
-    S_COM --> TOSS["Toss/Delivery API"]
-    S_MEM --> TOSS
-    S_CRON --> STG
+DB --> STG
+S_COM --> TOSS["Toss/Delivery API"]
+S_MEM --> TOSS
+S_CRON --> STG
 ```
 
 ### 두 서버의 책임 분리 원칙
