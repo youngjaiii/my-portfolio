@@ -76,10 +76,78 @@ mateyou/
 
 ## 3. System Architecture
 
-<img width="8191" height="2415" alt="Mermaid Chart - Create complex, visual diagrams with text -2026-03-02-053911" src="https://github.com/user-attachments/assets/0abca51b-9121-4018-b89c-658de5683b43" />
-<img width="8191" height="2415" alt="Mermaid Chart - Create complex, visual diagrams with text -2026-03-02-053911" src="https://github.com/user-attachments/assets/0abca51b-9121-4018-b89c-658de5683b43" />
-![Uploading Mermaid Chart - Create complex, visual diagrams with text.-2026-03-02-053911.png…]()
-![Uploading Mermaid Chart - Create complex, visual diagrams with text.-2026-03-02-053911.png…]()
+## 🏗 System Architecture
+
+서비스의 전체 구조와 제가 전담하여 개발한 **Supabase Edge Functions** 영역의 상세 아키텍처입니다.
+
+```mermaid
+graph TD
+    %% 스타일 정의
+    classDef highlight fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef main fill:#f5f5f5,stroke:#333,stroke-width:1px;
+
+    subgraph Client_Layer [Client Layer]
+        WEB["Web / Mobile App"]
+    end
+
+    subgraph NestJS_Server [project-mateyou-backend: NestJS Main Server]
+        NEST["NestJS Application"]
+        MW["JWT Auth Guard"]
+        MOD["25개 도메인 모듈<br/>(auth · payment · partner · chat 등)"]
+    end
+
+    subgraph Jun_Contribution [project-mateyou: Supabase Edge Functions - 이준 전담 개발 영역]
+        subgraph Commerce
+            SPROD["store-products<br/>상품 CRUD + 판매자 약관"]
+            SCART["store-cart<br/>장바구니 + 배송비 로직"]
+            SORD["store-orders<br/>주문·결제·배송·정산"]
+        end
+        subgraph Feed_Content [Feed & Content]
+            FEED["posts-feed<br/>팔로우 피드 + 미디어 접근 제어"]
+            PLIST["posts-list<br/>멤버십 구독 필터링"]
+            PPART["posts-partner<br/>파트너 프로필 피드"]
+        end
+        subgraph Membership
+            MSUB["membership-subscriptions<br/>구독 생성·재활성화"]
+        end
+        subgraph Automation_Cron [Automation: Cron]
+            CMEM["cron-membership-renewal<br/>자동 갱신 + 만료 알림"]
+            CCONF["cron-store-auto-confirm<br/>구매확정 자동화"]
+        end
+    end
+
+    subgraph Supabase_Platform [Supabase Platform]
+        DB[("PostgreSQL<br/>Triggers + RPC")]
+        STG["Supabase Storage<br/>Media Assets"]
+        SCH["Supabase Scheduler<br/>pg_cron"]
+    end
+
+    subgraph External_Services [External Services]
+        TOSS["Toss Payments<br/>결제 + 지급대행"]
+        TRACK["tracker.delivery<br/>배송 추적 API"]
+    end
+
+    %% 연결선
+    WEB -->|"REST API"| NEST
+    WEB -->|"Direct Call"| Jun_Contribution
+    
+    NEST --> MW --> MOD
+    MOD --> DB
+    
+    Jun_Contribution --> DB
+    DB --> STG
+    
+    SCH -->|"Scheduled Trigger"| Automation_Cron
+    
+    SORD --> TRACK
+    SORD --> TOSS
+    MSUB --> TOSS
+    
+    Automation_Cron <--> STG
+    
+    %% 클래스 적용
+    class Jun_Contribution highlight;
+    class NestJS_Server,Client_Layer,Supabase_Platform,External_Services main;
 
 
 ### 두 서버의 책임 분리 원칙
