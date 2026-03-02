@@ -80,6 +80,8 @@ mateyou/
 
 ## 🏗 System Architecture
 
+## 🏗 System Architecture
+
 본 프로젝트는 NestJS 기반의 메인 서버와 Supabase Edge Functions를 활용한 비즈니스 로직 서버로 분리되어 있습니다. 특히 제가 담당한 **Supabase Edge Functions** 영역은 트래픽 변화에 유연하게 대응하고, 독립적인 배포 및 확장이 가능하도록 설계되었습니다.
 
 ```mermaid
@@ -154,7 +156,6 @@ graph TD
     MSUB --> TOSS
     
     CMEM <--> STG
-
 
 ### 두 서버의 책임 분리 원칙
 
