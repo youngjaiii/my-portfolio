@@ -78,14 +78,12 @@ mateyou/
 
 ## 🏗 System Architecture
 
-서비스의 전체 구조와 제가 전담하여 개발한 **Supabase Edge Functions** 영역의 상세 아키텍처입니다.
+## 🏗 System Architecture
+
+본 프로젝트는 NestJS 기반의 메인 서버와 Supabase Edge Functions를 활용한 비즈니스 로직 서버로 분리되어 있습니다. 특히 제가 담당한 **Supabase Edge Functions** 영역은 트래픽 변화에 유연하게 대응하고, 독립적인 배포 및 확장이 가능하도록 설계되었습니다.
 
 ```mermaid
 graph TD
-    %% 스타일 정의
-    classDef highlight fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef main fill:#f5f5f5,stroke:#333,stroke-width:1px;
-
     subgraph Client_Layer [Client Layer]
         WEB["Web / Mobile App"]
     end
@@ -127,27 +125,35 @@ graph TD
         TRACK["tracker.delivery<br/>배송 추적 API"]
     end
 
-    %% 연결선
+    %% 연결선 정의
     WEB -->|"REST API"| NEST
-    WEB -->|"Direct Call"| Jun_Contribution
+    WEB -->|"Direct Call"| SPROD
+    WEB -->|"Direct Call"| FEED
+    WEB -->|"Direct Call"| MSUB
     
-    NEST --> MW --> MOD
+    NEST --> MW
+    MW --> MOD
     MOD --> DB
     
-    Jun_Contribution --> DB
-    DB --> STG
+    SPROD --> DB
+    SCART --> DB
+    SORD --> DB
+    FEED --> DB
+    PLIST --> DB
+    PPART --> DB
+    MSUB --> DB
+    CMEM --> DB
+    CCONF --> DB
     
-    SCH -->|"Scheduled Trigger"| Automation_Cron
+    DB --> STG
+    SCH -->|"Scheduled Trigger"| CMEM
+    SCH -->|"Scheduled Trigger"| CCONF
     
     SORD --> TRACK
     SORD --> TOSS
     MSUB --> TOSS
     
-    Automation_Cron <--> STG
-    
-    %% 클래스 적용
-    class Jun_Contribution highlight;
-    class NestJS_Server,Client_Layer,Supabase_Platform,External_Services main;
+    CMEM <--> STG
 
 
 ### 두 서버의 책임 분리 원칙
