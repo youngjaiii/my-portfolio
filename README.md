@@ -347,8 +347,6 @@ TRACKER_DELIVERY_CLIENT_SECRET=...
 
 <div align="center">
 
-**이준 (Lee Jun)** · Backend Engineer
-
 `TypeScript` `NestJS` `Deno` `Supabase` `PostgreSQL` `Toss Payments`
 
 *수익 모델이 코드로 작동하도록 설계합니다.*
