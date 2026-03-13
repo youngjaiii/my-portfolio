@@ -54,7 +54,7 @@ mateyou/
 │       ├── push/                   # Web Push Queue Worker
 │       └── ...                     # 총 25개 도메인 모듈
 │
-└── project-mateyou/                # Supabase Edge Functions ◀ 이준 주도 개발
+└── project-mateyou/                # Supabase Edge Functions ◀ 주도 개발
     └── functions/
         ├── posts-feed/             # 팔로우 피드 + 미디어 접근 제어
         ├── posts-list/             # 멤버십 구독 게시글 필터링
@@ -70,7 +70,7 @@ mateyou/
 | 프로젝트 | 담당 범위 | 런타임 |
 |---|---|---|
 | `project-mateyou-backend` | 인증, 실시간 매칭·채팅, 지급대행, 푸시 큐 | NestJS / Node.js |
-| `project-mateyou` | **스토어, 피드, 멤버십, Cron 자동화 (이준 전담)** | Deno / Supabase Edge Functions |
+| `project-mateyou` | **스토어, 피드, 멤버십, Cron 자동화 (전담 개발)** | Deno / Supabase Edge Functions |
 
 ---
 
