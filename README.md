@@ -1,7 +1,7 @@
 # MateYou — Backend Portfolio
 
 > 팬덤 기반 커머스 · 콘텐츠 구독 · 파트너 매칭 플랫폼의 풀스택 백엔드  
-> **TypeScript · NestJS · Deno · Supabase Edge Functions · PostgreSQL · Toss Payments**
+> **TypeScript · Express.js · Deno · Supabase Edge Functions · PostgreSQL · Toss Payments**
 
 ---
 
@@ -44,7 +44,7 @@ MateYou는 **파트너(크리에이터·스트리머)** 와 **팬(유저)** 을 
 
 ```
 mateyou/
-├── project-mateyou-backend/        # NestJS 메인 API 서버
+├── project-mateyou-backend/        # Express.js 메인 API 서버
 │   └── src/
 │       ├── auth/                   # JWT 인증·인가
 │       ├── payment/                # Toss Payments 결제·지급대행
@@ -69,7 +69,7 @@ mateyou/
 
 | 프로젝트 | 담당 범위 | 런타임 |
 |---|---|---|
-| `project-mateyou-backend` | 인증, 실시간 매칭·채팅, 지급대행, 푸시 큐 | NestJS / Node.js |
+| `project-mateyou-backend` | 인증, 실시간 매칭·채팅, 지급대행, 푸시 큐 | Express.js / Node.js |
 | `project-mateyou` | **스토어, 피드, 멤버십, Cron 자동화 (전담 개발)** | Deno / Supabase Edge Functions |
 
 ---
@@ -80,7 +80,7 @@ mateyou/
 
 ### 두 서버의 책임 분리 원칙
 
-**NestJS 메인 서버**는 동기적 응답과 상태 관리가 필요한 핵심 영역을 담당합니다. JWT 기반 인증·인가, 실시간 WebRTC 시그널링, 채팅 이벤트, Toss 지급대행 JWE 암호화처럼 요청-응답 사이클이 짧고 내부 워커 조율이 필요한 도메인입니다.
+**Express.js 메인 서버**는 동기적 응답과 상태 관리가 필요한 핵심 영역을 담당합니다. JWT 기반 인증·인가, 실시간 WebRTC 시그널링, 채팅 이벤트, Toss 지급대행 JWE 암호화처럼 요청-응답 사이클이 짧고 내부 워커 조율이 필요한 도메인입니다.
 
 **Supabase Edge Functions**는 비즈니스 규칙이 복잡하고 외부 서비스 연동이 많은 도메인을 독립된 서버리스 함수로 분리합니다. 각 함수는 독립적으로 배포·확장되며, Supabase Scheduler(pg_cron)가 Cron을 자동 트리거하므로 **별도의 작업 서버 없이 운영 자동화**가 완성됩니다. 이 구조 덕분에 스토어·피드·멤버십 도메인의 비즈니스 로직은 메인 서버의 변경에 영향받지 않고 독립적으로 진화합니다.
 
@@ -279,10 +279,10 @@ const getItemShippingFee = (item: CartItem) =>
 
 | 분류 | 기술 | 선택 이유 |
 |---|---|---|
-| **Main Server** | NestJS (TypeScript) | 모듈 기반 DI, 대규모 도메인 분리, Swagger 통합 |
+| **Main Server** | Express.js (TypeScript) | 모듈 기반 DI, 대규모 도메인 분리, Swagger 통합 |
 | **Serverless Functions** | Deno + Supabase Edge Functions | 표준 Web API 사용, 런타임 종속성 최소화 |
 | **Database** | PostgreSQL (Supabase) | RPC 트랜잭션, Trigger 기반 포인트 집계, pg_cron |
-| **Auth** | Supabase Auth + NestJS JWT Guard | Row Level Security 연동, 역할 기반 접근 제어 |
+| **Auth** | Supabase Auth + Express.js JWT Guard | Row Level Security 연동, 역할 기반 접근 제어 |
 | **Payment** | Toss Payments | 결제 + 지급대행 + JWE/AES-256-GCM 암호화 |
 | **Storage** | Supabase Storage | Signed URL 기반 동적 미디어 접근 제어 |
 | **Push** | Web Push Protocol (VAPID) + FCM | 서드파티 서비스 없는 자체 푸시 인프라 |
@@ -295,7 +295,7 @@ const getItemShippingFee = (item: CartItem) =>
 
 ## 7. Environment Variables
 
-### `project-mateyou-backend` (NestJS)
+### `project-mateyou-backend` (Express.js)
 
 ```bash
 # Server
@@ -347,7 +347,7 @@ TRACKER_DELIVERY_CLIENT_SECRET=...
 
 <div align="center">
 
-`TypeScript` `NestJS` `Deno` `Supabase` `PostgreSQL` `Toss Payments`
+`TypeScript` `Express.js` `Deno` `Supabase` `PostgreSQL` `Toss Payments`
 
 *수익 모델이 코드로 작동하도록 설계합니다.*
 
