@@ -57,7 +57,7 @@ graph TD
 
     subgraph "Supabase (PostgreSQL)"
         DB["PostgreSQL"]
-        TRIGGERS["DB Triggers (10개)<br/>포인트 집계 / 역할 동기화<br/>출금 처리 / 리뷰 코드 발급"]
+        TRIGGERS["DB Triggers (13개)<br/>포인트 집계 / 역할 동기화<br/>출금 처리 / 리뷰 코드 발급"]
         PUSH_Q["push_notifications_queue"]
         WEB_PUSH_SUB["web_push_subscriptions"]
     end
