@@ -111,7 +111,7 @@ graph TD
 |---|---|---|---|
 | 피드 콘텐츠 제어 | `posts-feed.ts` | ~420 LOC | 팔로우 피드, 미디어 접근 제어, 양방향 차단 필터링 |
 | 피드 고급 필터 | `posts-list.ts` | ~1,000 LOC | 멤버십 구독 게시글, tier_rank 기반 권한, 랜덤 피드 |
-| 파트너 프로필 피드 | `posts-partner.ts` | ~230 LOC | 파트너별 피드, 고정 게시글 우선 정렬, Signed URL |
+| 파트너 프로필 피드 | `posts-partner.ts` | ~281 LOC | 파트너별 피드, 고정 게시글 우선 정렬, Signed URL |
 | 스토어 상품 | `store-products.ts` | ~1,690 LOC | 상품 CRUD, 이미지 업로드, 판매자 약관 관리 |
 | 장바구니 | `store-cart.ts` | ~1,377 LOC | 장바구니, 묶음배송 계산, 산간 지역 추가 배송비 |
 | 주문·정산 | `store-orders.ts` | ~3,617 LOC | 주문 생성, 배송추적, 협업 다자간 포인트 배분 |
